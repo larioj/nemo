@@ -4,11 +4,15 @@ import           Crypto.Hash.SHA256
 import           Data.ByteString.Base16
 import           Data.ByteString.Char8  (pack, unpack)
 import           Data.Char
+import           Data.List              ((\\))
+import           Data.Maybe
 import           NemoLib.Delete
-import qualified NemoLib.File
+import           NemoLib.File
 import           NemoLib.FlipFmap
 import           NemoLib.If
+import           NemoLib.NemoNode
 import           NemoLib.Select
+import           NemoLib.ShadowNode
 import           System.Directory
 import           System.Environment
 import           System.FilePath.Posix
@@ -26,7 +30,7 @@ nemo :: [String] -> IO ()
 nemo ("initialize" : []) = initialize
 nemo ("status" : [])     = status
 nemo ("add" : file : []) = add file
-nemo _                   = putStrLn "error: check the usage"
+nemo _                   = putStrLn "error: wrong usage"
 
 initialize :: IO ()
 initialize =
@@ -86,13 +90,41 @@ shiftBase16Char c =
                   ((ord 'A') - (ord '0'))
                   ((ord 'K') - (ord 'a'))
 
-
-
 shadeFiles :: [File] -> [File]
 shadeFiles = undefined
 
-topoSort :: [NemoNode] -> [NemoNode]
-topoSort = undefined
-
 shadeNemoNodes :: [NemoNode] -> [NemoNode]
-shadeNemoNodes = undefined
+shadeNemoNodes nodes =
+    foldl accumulateShadowNodes [] ((reverse . topoSort) nodes)
+
+accumulateShadowNodes :: [NemoNode] -> NemoNode -> [NemoNode]
+accumulateShadowNodes shadowNodes node =
+    undefined
+
+nemoNodeToShadowNode :: [ShadowNode] -> NemoNode -> ShadowNode
+nemoNodeToShadowNode dependencies node = undefined
+
+topoSort :: [NemoNode] -> [NemoNode]
+topoSort graph =
+    foldl (accumulatePath graph []) [] graph
+
+dfsPath :: [NemoNode] -> [NemoNode] -> NemoNode -> [NemoNode]
+dfsPath graph seen node
+    | node `elem` seen = []
+    | otherwise = node : (foldl (accumulatePath graph (node : seen)) [] (getDependencies graph node))
+
+accumulatePath :: [NemoNode] -> [NemoNode] -> [NemoNode] -> NemoNode -> [NemoNode]
+accumulatePath graph seen path node =
+    if' (node `elem` allSeen) path
+        ((dfsPath graph allSeen node) ++ path)
+    where allSeen = seen ++ path
+
+getDependencies :: [NemoNode] -> NemoNode -> [NemoNode]
+getDependencies graph node =
+    (catMaybes . (map (lookupNemoNode graph))) (dependencies node)
+
+lookupNemoNode :: [NemoNode] -> String -> Maybe NemoNode
+lookupNemoNode graph path = lookup path (associate graph)
+
+associate :: [NemoNode] -> [(String, NemoNode)]
+associate = map (\n  -> (address n, n))
