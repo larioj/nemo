@@ -1,12 +1,12 @@
 module NemoLib.DfsVisit where
 
-import           Data.Set (Set)
-import           OrdSet   (OrdSet)
-import qualified OrdSet
+import           Data.Set       (Set)
+import           NemoLib.Cons
+import           NemoLib.Elem
+import           NemoLib.OrdSet
+import           Prelude        hiding (elem)
 
 dfsVisit :: Ord a => (a -> Set a) -> OrdSet a -> a -> OrdSet a
 dfsVisit children progress node
-    | OrdSet.elem node progress =
-        progress
-    | otherwise =
-        OrdSet.cons node (foldl (dfsVisit children) progress (children node))
+    | elem node progress = progress
+    | otherwise = cons node (foldl (dfsVisit children) progress (children node))

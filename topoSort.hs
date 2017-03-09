@@ -4,8 +4,8 @@ import           Data.List  (nub)
 import           Data.Maybe (fromJust)
 import           Data.Set(Set)
 import qualified Data.Set as Set
-import           OrdSet     (OrdSet)
-import qualified OrdSet
+import NemoLib.TopoSort
+
 
 main = print (topoSort getChildren (map fst graph))
 
@@ -21,11 +21,10 @@ graph = [b, a, d, c, e]
 type Node = (String, [String])
 type Graph = [Node]
 
-
 getChildren :: String -> Set String
 getChildren node = (Set.fromList .fromJust) (lookup node graph)
 
-
+{--
 dfsVisit :: Ord a => (a -> Set a) -> OrdSet a -> a -> OrdSet a
 dfsVisit children progress node
     | OrdSet.elem node progress = progress
@@ -34,9 +33,7 @@ dfsVisit children progress node
 topoSort :: Ord a => (a -> Set a) -> [a] -> [a]
 topoSort children nodes =
     OrdSet.list (foldl (dfsVisit children) (OrdSet.fromList []) nodes)
-
-
-
+--}
 
 {--
 dfsVisit :: Eq a => (a -> [a]) -> [a] -> a -> [a]
