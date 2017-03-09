@@ -1,9 +1,4 @@
 module NemoLib.NemoNode where
 
-import           NemoLib.File
-
-data NemoNode =
-    NemoNode { address      :: String
-             , contents     :: String
-             , dependencies :: [String]
-             } deriving (Show, Eq)
+data NemoNode = NemoNode FilePath String [FilePath]
+                deriving (Show, Eq, Ord)
