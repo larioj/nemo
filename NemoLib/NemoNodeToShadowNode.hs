@@ -1,4 +1,4 @@
 module NemoLib.NemoNodeToShadowNode where
 
-nemoNodeToShadowNode :: NemoNode -> ShadowNode
-nemoNodeToShadowNode = undefined
+nemoNodeToShadowNode :: [(FilePath, FilePath)] -> NemoNode -> ShadowNode
+nemoNodeToShadowNode pointers node = undefined

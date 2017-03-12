@@ -1,4 +1,5 @@
 module NemoLib.CreateSubstitutions where
 
-createSubstitutions :: 
-createSubstitutions 
+createSubstitutions :: [(FilePath, FilePath)] -> [(Regex, String)]
+createSubstitutions pointers =
+   
