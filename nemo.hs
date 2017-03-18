@@ -1,10 +1,21 @@
 #!/usr/bin/env runhaskell
 
+import           Data.List                      (delete, intercalate)
+import           Data.Tuple                     (swap)
+import           NemoLib.File
+import           NemoLib.FileToNemoNode
+import           NemoLib.FlipFmap
+import           NemoLib.GetClosure
+import           NemoLib.GetFile
+import           NemoLib.GetModifiedFiles
+import           NemoLib.GetNewFiles
+import           NemoLib.NemoNode
+import           NemoLib.NemoNodesToShadowNodes
+import           NemoLib.Select
+import           NemoLib.ShadowNode
 import           System.Directory
 import           System.Environment
 import           System.FilePath.Posix
-import NemoLib.FlipFmap
-import Data.List(delete)
 
 main :: IO ()
 main = getArgs >>= nemo
@@ -33,22 +44,70 @@ status =
     getDomainState >>= \domainState ->
     putStrLn (showStateDifferences nemoState domainState)
 
-add :: FilePath -> IO ()
-add = undefined
+getNemoState :: IO [ShadowNode]
+getNemoState = readNemoFile >>=
+               mapM getShadowNode
 
-getNemoState :: IO [(String, FilePath)]
-getNemoState = readFile nemoFilePath $>> read
+readNemoFile :: IO [(String, String)]
+readNemoFile = readFile nemoFilePath $>> read
 
-getDomainState :: IO [(String, FilePath)]
+getShadowNode :: (String, String) -> IO ShadowNode
+getShadowNode (shadow, nemo) =
+    readFile (getShadowPath shadow) $>>
+    ShadowNode shadow nemo
+
+getShadowPath :: String -> FilePath
+getShadowPath shadow =
+    nemoShadowPath ++ shadow ++ ".hs"
+
+getDomainState :: IO [ShadowNode]
 getDomainState =
-    listDirectory nemoDirectoryPath $>>
-    removeNemoFileAndNemoShadow $>>
-    map (\d -> (d, d))
+    getNemoNodes $>>
+    nemoNodesToShadowNodes
 
 removeNemoFileAndNemoShadow :: [FilePath] -> [FilePath]
 removeNemoFileAndNemoShadow =
     (delete nemoShadowName) . (delete nemoFileName)
 
-showStateDifferences :: [(String, FilePath)] -> [(String, FilePath)] -> String
+showStateDifferences :: [ShadowNode] -> [ShadowNode] -> String
 showStateDifferences nemo domain =
-    (show nemo) ++ "\n" ++ (show domain)
+    newFiles ++ "\n" ++ modifiedFiles
+    where newFiles = formatNewFiles (getNewFiles nemo domain)
+          modifiedFiles = formatModifiedFiles (getModifiedFiles nemo domain)
+
+formatModifiedFiles :: [String] -> String
+formatModifiedFiles =
+    formatFiles "new"
+
+formatNewFiles :: [String] -> String
+formatNewFiles =
+    formatFiles "new"
+
+formatFiles :: String -> [String] -> String
+formatFiles message files =
+    intercalate "\n" $
+    map (\f -> message ++ " " ++ (nemoDirectoryPath </> f) ++ ".hs") files
+
+add :: FilePath -> IO ()
+add file =
+    getNemoNodes $>>
+    getClosure file $>>
+    nemoNodesToShadowNodes >>=
+    writeShadowNodes
+
+writeShadowNodes :: [ShadowNode] -> IO ()
+writeShadowNodes = mapM_ writeShadowNode
+
+getNemoFiles :: IO [File]
+getNemoFiles =
+    listDirectory nemoDirectoryPath $>>
+    removeNemoFileAndNemoShadow $>>
+    (map ((</>) nemoDirectoryPath)) >>=
+    (mapM getFile)
+    
+writeShadowNode :: ShadowNode -> IO ()
+writeShadowNode (ShadowNode hash name contents) =
+    putStrLn $ "writing shadow node" ++ name
+
+getNemoNodes :: IO [NemoNode]
+getNemoNodes = getNemoFiles $>> map fileToNemoNode

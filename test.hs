@@ -1,7 +1,13 @@
 #!/usr/bin/env runhaskell
 
-import NemoLib.ExtractDependencies
+import NemoLib.GetFile
+import NemoLib.FileToNemoNode
+import NemoLib.FlipFmap
+import NemoLib.NemoNodesToShadowNodes
 
-main = readFile "nemo.hs" >>= \c ->
-       print (extractDependencies c)
+main = getFile "nemo.hs" $>> 
+       fileToNemoNode $>> 
+       ((flip (:)) []) $>>
+       nemoNodesToShadowNodes >>= 
+       print
 
