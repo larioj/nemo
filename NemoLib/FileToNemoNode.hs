@@ -1,9 +1,9 @@
 module NemoLib.FileToNemoNode where
 
-import NemoLib.ExtractDependencies
-import NemoLib.PathToAddress
-import NemoLib.NemoNode
-import NemoLib.File
+import           NemoLib.ExtractDependencies
+import           NemoLib.File
+import           NemoLib.NemoNode
+import           NemoLib.PathToAddress
 
 fileToNemoNode :: File -> NemoNode
 fileToNemoNode (File path contents) =

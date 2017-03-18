@@ -1,13 +1,13 @@
 module NemoLib.NemoNodesToShadowNodes where
 
-import NemoLib.NemoNode
-import NemoLib.ShadowNode
-import NemoLib.NemoNodeToShadowNode
-import NemoLib.TopoSort
-import NemoLib.LookupDependencies
-import NemoLib.FoldNemoNodeToShadowNode
-import NemoLib.ExtractPointers
-import NemoLib.ExtractPointer
+import           NemoLib.ExtractPointer
+import           NemoLib.ExtractPointers
+import           NemoLib.FoldNemoNodeToShadowNode
+import           NemoLib.LookupDependencies
+import           NemoLib.NemoNode
+import           NemoLib.NemoNodeToShadowNode
+import           NemoLib.ShadowNode
+import           NemoLib.TopoSort
 
 nemoNodesToShadowNodes :: [NemoNode] -> [ShadowNode]
 nemoNodesToShadowNodes nodes =

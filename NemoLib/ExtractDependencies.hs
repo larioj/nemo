@@ -1,6 +1,6 @@
 module NemoLib.ExtractDependencies where
 
-import Text.Regex.Posix
+import           Text.Regex.Posix
 
 extractDependencies :: String -> [String]
 extractDependencies s =

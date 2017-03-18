@@ -1,13 +1,13 @@
 module NemoLib.GetClosure where
 
-import NemoLib.NemoNode
-import NemoLib.ToList
-import NemoLib.FromList
-import NemoLib.LookupDependencies
+import           Data.Maybe                 (fromJust)
+import           NemoLib.DfsVisit
+import           NemoLib.FromList
 import           NemoLib.Lookup
-import Data.Maybe(fromJust)
-import Prelude hiding (lookup)
-import NemoLib.DfsVisit
+import           NemoLib.LookupDependencies
+import           NemoLib.NemoNode
+import           NemoLib.ToList
+import           Prelude                    hiding (lookup)
 
 getClosure :: String -> [NemoNode] -> [NemoNode]
 getClosure name graph =

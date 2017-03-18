@@ -14,7 +14,7 @@ escapeRegexT = escapeChars metachars
 escapeChars :: [T.Text] -- meta chars
             -> T.Text -- Input text
             -> T.Text -- Output text
-escapeChars [] inputText = inputText
+escapeChars [] inputText     = inputText
 escapeChars (m:ms) inputText = escapeChars ms $ escapeMetaChar inputText m
 
 escapeMetaChar :: T.Text -- input text

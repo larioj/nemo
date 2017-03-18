@@ -1,9 +1,9 @@
 module NemoLib.FoldNemoNodeToShadowNode where
 
-import NemoLib.ShadowNode
-import NemoLib.NemoNode
-import NemoLib.ExtractPointers
-import NemoLib.NemoNodeToShadowNode
+import           NemoLib.ExtractPointers
+import           NemoLib.NemoNode
+import           NemoLib.NemoNodeToShadowNode
+import           NemoLib.ShadowNode
 
 foldNemoNodeToShadowNode :: [ShadowNode] -> NemoNode -> [ShadowNode]
 foldNemoNodeToShadowNode sNodes nemoNode = sNode : sNodes

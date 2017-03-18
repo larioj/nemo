@@ -1,12 +1,12 @@
 module NemoLib.NemoNodeToShadowNode where
 
-import NemoLib.NemoNode
-import NemoLib.ShadowNode
-import NemoLib.GetContents
-import NemoLib.GetAddress
-import NemoLib.ReplaceDependencies
-import NemoLib.ShiftedBase16Hash
-import Prelude hiding (getContents)
+import           NemoLib.GetAddress
+import           NemoLib.GetContents
+import           NemoLib.NemoNode
+import           NemoLib.ReplaceDependencies
+import           NemoLib.ShadowNode
+import           NemoLib.ShiftedBase16Hash
+import           Prelude                     hiding (getContents)
 
 -- nemo to hash
 nemoNodeToShadowNode :: [(String, String)] -> NemoNode -> ShadowNode

@@ -1,8 +1,8 @@
 module NemoLib.GetNewFiles where
 
-import NemoLib.GetName
-import Data.List((\\))
-import NemoLib.ShadowNode
+import           Data.List          ((\\))
+import           NemoLib.GetName
+import           NemoLib.ShadowNode
 
 getNewFiles :: [ShadowNode] -> [ShadowNode] -> [String]
 getNewFiles previous current =

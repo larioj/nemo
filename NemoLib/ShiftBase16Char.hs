@@ -1,7 +1,7 @@
 module NemoLib.ShiftBase16Char where
 
-import NemoLib.If
-import Data.Char(Char, ord, chr)
+import           Data.Char  (Char, chr, ord)
+import           NemoLib.If
 
 shiftBase16Char :: Char -> Char
 shiftBase16Char c =

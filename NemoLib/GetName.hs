@@ -1,6 +1,6 @@
 module NemoLib.GetName where
 
-import NemoLib.ShadowNode
+import           NemoLib.ShadowNode
 
-getName :: ShadowNode -> String  
-getName (ShadowNode _ name _) = name  
+getName :: ShadowNode -> String
+getName (ShadowNode _ name _) = name
