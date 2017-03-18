@@ -8,9 +8,10 @@ import           NemoLib.ShadowNode
 import           NemoLib.ShiftedBase16Hash
 import           Prelude                     hiding (getContents)
 
--- nemo to hash
 nemoNodeToShadowNode :: [(String, String)] -> NemoNode -> ShadowNode
 nemoNodeToShadowNode pointers node =
-    ShadowNode address (getAddress node) contents
-    where contents = replaceDependencies pointers (getContents node)
-          address = shiftedBase16Hash contents
+    ShadowNode hash name contents
+    where name = getAddress node
+          preModuleContents = replaceDependencies pointers (getContents node)
+          hash = shiftedBase16Hash preModuleContents
+          contents = replaceDependencies [(hash, name)] preModuleContents

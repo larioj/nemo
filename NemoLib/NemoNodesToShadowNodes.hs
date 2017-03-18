@@ -11,6 +11,6 @@ import           NemoLib.TopoSort
 
 nemoNodesToShadowNodes :: [NemoNode] -> [ShadowNode]
 nemoNodesToShadowNodes nodes =
-    foldl foldNemoNodeToShadowNode [] nodes
+    foldl foldNemoNodeToShadowNode [] sorted
     where sorted = topoSort (lookupDependencies nodes) nodes
 

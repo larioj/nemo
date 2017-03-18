@@ -7,4 +7,4 @@ import           NemoLib.ToList
 
 topoSort :: Ord a => (a -> Set a) -> [a] -> [a]
 topoSort children nodes =
-    toList (foldl (dfsVisit children) (fromList []) nodes)
+    reverse (toList (foldl (dfsVisit children) (fromList []) nodes))

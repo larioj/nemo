@@ -3,11 +3,11 @@ module NemoLib.ReplaceDependency where
 import           NemoLib.EscapeRegex
 import           Text.Regex          (mkRegex, subRegex)
 
--- replace NemoLib.<key> with NemoLib.ShadowLib.<value>
+-- replace NemoLib.<name> with NemoLib.ShadowLib.<hash_name>
 
 replaceDependency :: String -> (String, String) -> String
-replaceDependency contents (key, value) =
-    subRegex (mkRegex (escapeRegex keyText)) contents valueText
-    where keyText = "NemoLib." ++ key
-          valueText = "NemoLib.ShadowLib." ++ value
+replaceDependency contents (hash, name) =
+    subRegex (mkRegex (escapeRegex nameText)) contents hashText
+    where nameText = "NemoLib." ++ name
+          hashText = "NemoLib.ShadowLib." ++ hash ++ "_" ++ name
 

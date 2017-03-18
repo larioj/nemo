@@ -11,4 +11,4 @@ import           Prelude                    hiding (lookup)
 
 getClosure :: String -> [NemoNode] -> [NemoNode]
 getClosure name graph =
-    toList (dfsVisit (lookupDependencies graph) (fromList []) (fromJust (lookup graph name)))
+    reverse (toList (dfsVisit (lookupDependencies graph) (fromList []) (fromJust (lookup graph name))))
