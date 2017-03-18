@@ -9,6 +9,7 @@ import           NemoLib.GetClosure
 import           NemoLib.GetFile
 import           NemoLib.GetModifiedFiles
 import           NemoLib.GetNewFiles
+import           NemoLib.If
 import           NemoLib.NemoNode
 import           NemoLib.NemoNodesToShadowNodes
 import           NemoLib.Select
@@ -91,7 +92,7 @@ formatFiles message files =
 add :: FilePath -> IO ()
 add file =
     getNemoNodes $>>
-    getClosure file $>>
+    getClosure (takeBaseName file) $>>
     nemoNodesToShadowNodes >>=
     writeShadowNodes
 
@@ -104,10 +105,18 @@ getNemoFiles =
     removeNemoFileAndNemoShadow $>>
     (map ((</>) nemoDirectoryPath)) >>=
     (mapM getFile)
-    
+
 writeShadowNode :: ShadowNode -> IO ()
 writeShadowNode (ShadowNode hash name contents) =
-    putStrLn $ "writing shadow node" ++ name
+    writeFileIfNotExists path contents
+    where path = nemoShadowPath </> (hash ++ "_" ++ name ++ ".hs")
+
+writeFileIfNotExists :: FilePath -> String -> IO ()
+writeFileIfNotExists path contents =
+    doesPathExist path >>= \exists ->
+    if' exists
+        (return ())
+        (writeFile path contents >> (putStrLn $ "writing shadow node to " ++ path))
 
 getNemoNodes :: IO [NemoNode]
 getNemoNodes = getNemoFiles $>> map fileToNemoNode
