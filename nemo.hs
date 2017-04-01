@@ -17,6 +17,7 @@ import           NemoLib.ShadowNode
 import           System.Directory
 import           System.Environment
 import           System.FilePath.Posix
+import Data.List.Split(splitOn)
 
 main :: IO ()
 main = getArgs >>= nemo
@@ -46,11 +47,20 @@ status =
     putStrLn (showStateDifferences nemoState domainState)
 
 getNemoState :: IO [ShadowNode]
-getNemoState = readNemoFile >>=
-               mapM getShadowNode
+getNemoState = getShadowNodes
 
 readNemoFile :: IO [(String, String)]
 readNemoFile = readFile nemoFilePath $>> read
+
+getShadowNodes :: IO [ShadowNode]
+getShadowNodes =
+    getShadowFiles $>> map fileToShadowNode
+
+getShadowFiles :: IO [File]
+getShadowFiles =
+    listDirectory nemoShadowPath  $>>
+    (map ((</>) nemoShadowPath)) >>=
+    (mapM getFile)
 
 getShadowNode :: (String, String) -> IO ShadowNode
 getShadowNode (shadow, nemo) =
@@ -60,7 +70,14 @@ getShadowNode (shadow, nemo) =
 getShadowPath :: String -> FilePath
 getShadowPath shadow =
     nemoShadowPath ++ shadow ++ ".hs"
-
+    
+fileToShadowNode :: File -> ShadowNode
+fileToShadowNode f =
+    ShadowNode hash name contents
+    where basename = takeBaseName ((\(File p _) -> p) f)
+          [hash, name] = splitOn "_" basename
+          contents = (\(File _ c) -> c) f
+      
 getDomainState :: IO [ShadowNode]
 getDomainState =
     getNemoNodes $>>
