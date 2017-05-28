@@ -1,3 +1,7 @@
 module Main where
 
-main = putStrLn "hello world"
+import GraphTest
+    ( runTest
+    )
+
+main = runTest

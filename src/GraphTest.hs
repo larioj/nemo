@@ -1,6 +1,8 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
-module GraphTest where
+module GraphTest
+    ( runTest
+    )where
 
 import Data.Set
     ( Set
@@ -28,4 +30,4 @@ pairs (i, s) = fromList . fmap (\s -> (i, s)) $ s
 someGraph :: [(Int, [Int])]
 someGraph = [(1, [2, 4]), (2, [3]), (3, []), (4, [3])]
 
-main = putStrLn . show $ (topoSort someGraph)
+runTest = putStrLn . show $ (topoSort someGraph)
