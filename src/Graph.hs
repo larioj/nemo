@@ -2,21 +2,19 @@
 {-# LANGUAGE FunctionalDependencies #-}
 module Graph where
 
+import Data.Map
+    ( Map
+    , findWithDefault
+    , keysSet
+    )
 import Data.Set
     ( Set
     , toList
     , fromList
     )
-
-import Control.Monad.Trans.State
-    ( State
-    , runState
-    )
-
 import Util
     ( choose
     )
-
 import StateCtl
     ( seen
     , record
@@ -24,21 +22,19 @@ import StateCtl
     , runStateCtl
     )
 
-class Graph g v e | g -> v e where
-    vertices :: g -> Set v
-    children :: g -> v -> Set v
-    merge :: g -> g -> g
-    add :: v -> g -> g
-    map :: g -> (e -> e) -> v -> v
+type Graph k = Map k (Set k)
 
-dfFold :: (Graph g v e, Ord v) => (a -> v -> a) -> a -> g -> a
-dfFold f init g = runStateCtl (dfv' . vertices $ g) $ init
+dfv :: Ord k => Set k -> Set k -> (a -> k -> a) -> a -> Graph k -> a
+dfv seeds ctl f init g = runStateCtl (dfv' seeds) $ (init, ctl)
     where dfv' = mapM_ iter . toList
-          iter v = seen v >>=
-                   choose (return ()) (recur v)
-          recur v = record v >>= \_ ->
-                    (dfv' . children g $ v) >>= \_ ->
-                    transform f v
+          iter k = seen k >>=
+                   choose (return ()) (recur k)
+          recur k = record k >>= \_ ->
+                    (dfv' . findWithDefault (fromList []) k $ g) >>= \_ ->
+                    transform f k
 
-topoSort :: (Graph g v e, Ord v) => g -> [v]
+dfFold :: Ord k => (a -> k -> a) -> a -> Graph k -> a
+dfFold f init g  = dfv (keysSet g) (fromList []) f init g
+
+topoSort :: Ord k => Graph k -> [k]
 topoSort = dfFold (flip (:)) []

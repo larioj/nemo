@@ -6,7 +6,6 @@ import Data.Set
     , insert
     , fromList
     )
-
 import Control.Monad.Trans.State
     ( State
     , state
@@ -22,5 +21,5 @@ record c = state $ \(acc, ctl) -> ((), (acc, insert c ctl))
 seen :: (Ord c) => c -> State (a, Set c) Bool
 seen c = state $ \(acc, ctl) -> (member c ctl, (acc, ctl))
 
-runStateCtl :: (Ord c) => State (a, Set c) b -> a -> a
-runStateCtl s init = fst . snd . runState s $ (init, fromList [])
+runStateCtl :: (Ord c) => State (a, Set c) b -> (a, Set c) -> a
+runStateCtl s init = fst . snd . runState s $ init
