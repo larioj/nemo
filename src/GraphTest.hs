@@ -13,6 +13,7 @@ import Graph
     ( Graph
     , vertices
     , children
+    , merge
     , topoSort
     )
 
@@ -23,6 +24,7 @@ import Data.Maybe
 instance Graph [(Int, [Int])] Int (Int, Int) where
     vertices = fromList . fmap fst
     children g v = fromList . concat . maybeToList . lookup v $ g
+    merge = (++)
 
 pairs :: (Int, [Int]) -> Set (Int, Int)
 pairs (i, s) = fromList . fmap (\s -> (i, s)) $ s

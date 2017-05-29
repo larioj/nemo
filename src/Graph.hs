@@ -27,6 +27,9 @@ import StateCtl
 class Graph g v e | g -> v e where
     vertices :: g -> Set v
     children :: g -> v -> Set v
+    merge :: g -> g -> g
+    add :: v -> g -> g
+    map :: g -> (e -> e) -> v -> v
 
 dfFold :: (Graph g v e, Ord v) => (a -> v -> a) -> a -> g -> a
 dfFold f init g = runStateCtl (dfv' . vertices $ g) $ init
