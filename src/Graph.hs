@@ -37,8 +37,8 @@ dfFold f init g = runStateCtl (dfv' . vertices $ g) $ init
           iter v = seen v >>=
                    choose (return ()) (recur v)
           recur v = record v >>= \_ ->
-                     (dfv' . children g $ v) >>= \_ ->
-                     transform f v
+                    (dfv' . children g $ v) >>= \_ ->
+                    transform f v
 
 topoSort :: (Graph g v e, Ord v) => g -> [v]
 topoSort = dfFold (flip (:)) []
