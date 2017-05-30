@@ -10,7 +10,7 @@ import Graph
     )
 import Nemo
     ( Nemo
-    , update
+    , sync
     )
 import Util
     ( putShowLn
@@ -26,11 +26,11 @@ someNemo = (someGraph, empty :: Graph String, empty :: Graph String)
 
 shadow _ k = k ++ "-clone"
 test1 = toList deps
-    where (deps, pred, clone) = update shadow someNemo
+    where (deps, pred, clone) = sync shadow someNemo
 test2 = toList deps
     where
-        someNemo' = update shadow someNemo
-        (deps, pred, clone) = update shadow someNemo'
+        someNemo' = sync shadow someNemo
+        (deps, pred, clone) = sync shadow someNemo'
 
 runTest =
     putShowLn test1 >>

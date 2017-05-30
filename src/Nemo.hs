@@ -1,6 +1,6 @@
 module Nemo
     ( Nemo
-    , update
+    , sync
     ) where
 
 import qualified Data.Set as Set
@@ -21,17 +21,17 @@ import Util
 
 type Nemo k = (Graph k, Graph k, Graph k)
 
-update :: Ord k => (Nemo k -> k -> k) -> Nemo k -> Nemo k
-update f (dependencyGraph, predecessorGraph, cloneGraph) =
+sync :: Ord k => (Nemo k -> k -> k) -> Nemo k -> Nemo k
+sync f (dependencyGraph, predecessorGraph, cloneGraph) =
     dfv seeds ctl accfn init dependencyGraph
     where
         seeds = Map.keysSet dependencyGraph
         ctl = Set.fromList . concat . map Set.toList . Map.elems $ cloneGraph
-        accfn = update' f
+        accfn = sync' f
         init = (dependencyGraph, predecessorGraph,cloneGraph)
 
-update' :: Ord k => (Nemo k -> k -> k) -> Nemo k -> k -> Nemo k
-update' f (dependencyGraph, predecessorGraph, cloneGraph) original =
+sync' :: Ord k => (Nemo k -> k -> k) -> Nemo k -> k -> Nemo k
+sync' f (dependencyGraph, predecessorGraph, cloneGraph) original =
     if' ((Set.singleton clone) == oldClone) sameState changedState
     where
         sameState = (dependencyGraph, predecessorGraph, cloneGraph)
