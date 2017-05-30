@@ -33,5 +33,5 @@ test2 = toList deps
         (deps, pred, clone) = update shadow someNemo'
 
 runTest =
-    putShowLn test1 >>= \_ ->
+    putShowLn test1 >>
     putShowLn test2

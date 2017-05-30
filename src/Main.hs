@@ -1,7 +1,9 @@
 module Main where
 
-import NemoTest
-    ( runTest
-    )
+import qualified GraphTest
+import qualified NemoTest
 
-main = runTest
+main =
+    GraphTest.runTest >>
+    putStrLn "" >>
+    NemoTest.runTest
