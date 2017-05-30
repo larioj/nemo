@@ -1,6 +1,6 @@
 module Main where
 
-import GraphTest
+import NemoTest
     ( runTest
     )
 
