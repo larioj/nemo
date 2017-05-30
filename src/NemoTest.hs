@@ -11,6 +11,7 @@ import Graph
 import Nemo
     ( Nemo
     , sync
+    , successors
     )
 import Util
     ( putShowLn
@@ -32,6 +33,11 @@ test2 = toList deps
         someNemo' = sync shadow someNemo
         (deps, pred, clone) = sync shadow someNemo'
 
+someSuccessorGraph = fromList [(a, [b]), (b, [c]), (c, [e]), (d, [a])]
+test3 = successors someSuccessorGraph a
+
 runTest =
     putShowLn test1 >>
-    putShowLn test2
+    putShowLn test2 >>
+    putStrLn "" >>
+    putShowLn test3
