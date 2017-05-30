@@ -12,7 +12,7 @@ import Data.Set
     ( Set
     )
 import Util
-    ( ifM
+    ( ifM_
     )
 import StateCtl
     ( seen
@@ -34,7 +34,7 @@ dfv seeds ctl f init g = runStateCtl (dfv' seeds) $ (init, ctl)
     where
         dfv' ks =
             forM_ (Set.toList ks) (\k ->
-                ifM (seen k) (return ()) (
+                ifM_ (seen k) (return ()) (
                     record k >>
                     (dfv' (findWithDefault Set.empty k  g)) >>
                     transform f k

@@ -3,6 +3,7 @@ module Util
   , if'
   , putShowLn
   , ifM
+  , ifM_
   ) where
 
 choose :: a -> a -> Bool -> a
@@ -16,3 +17,6 @@ putShowLn = putStrLn . show
 
 ifM :: Monad m => m Bool -> m a -> m a -> m a
 ifM cond a b = cond >>= choose a b
+
+ifM_ :: Monad m => m Bool -> m a -> m b -> m ()
+ifM_ cond a b = ifM cond (a >> return ()) (b >> return ())
