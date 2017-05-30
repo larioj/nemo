@@ -2,6 +2,7 @@ module Util
   ( choose
   , if'
   , putShowLn
+  , ifM
   ) where
 
 choose :: a -> a -> Bool -> a
@@ -12,3 +13,6 @@ if' cond a b = if cond then a else b
 
 putShowLn :: Show a => a -> IO ()
 putShowLn = putStrLn . show
+
+ifM :: Monad m => m Bool -> m a -> m a -> m a
+ifM cond a b = cond >>= choose a b
