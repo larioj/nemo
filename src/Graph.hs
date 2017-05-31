@@ -62,7 +62,7 @@ inverse g = foldWithKey invert init g
         keys = Set.toList . Map.keysSet $ g
         values = concat . map Set.toList . Map.elems $ g
         elems = union keys values
-        init = foldl (\g k -> Map.insert k Set.empty g) Map.empty elems
+        init = Map.fromList . map (\k -> (k, Set.empty)) $ elems
         invert v sk g = foldl (insert v) g (Set.toList sk)
         insert v g k = Map.insert k newv g
             where

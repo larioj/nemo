@@ -9,3 +9,4 @@ executable Graph
   build-depends:   base
                  , containers
                  , transformers
+                 , filepath
