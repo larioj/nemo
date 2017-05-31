@@ -1,9 +1,9 @@
-module GraphTest
-    ( runTest
-    )where
+module GraphSpec (spec) where
 
+import Test.Hspec
 import qualified Data.Set as Set
 import qualified Data.Map as Map
+
 import Graph
     ( Graph
     , topoSort
@@ -25,3 +25,8 @@ runTest =
     putShowLn test1 >>
     putShowLn (toList someGraph) >>
     putShowLn test2
+
+spec :: Spec
+spec = describe "A passing test" $ do
+    it "should pass" $ do
+        (shouldBe 1 2)

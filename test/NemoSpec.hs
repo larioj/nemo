@@ -1,7 +1,6 @@
-module NemoTest
-    ( runTest
-    ) where
+module NemoSpec where
 
+import Test.Hspec
 import Graph
     ( Graph
     , fromList
@@ -36,8 +35,14 @@ test2 = toList deps
 someSuccessorGraph = fromList [(a, [b]), (b, [c]), (c, [e]), (d, [a])]
 test3 = successors someSuccessorGraph a
 
+runTest :: IO ()
 runTest =
     putShowLn test1 >>
     putShowLn test2 >>
     putStrLn "" >>
     putShowLn test3
+
+spec :: Spec
+spec = describe "A passing test" $ do
+    it "should pass" $ do
+        (shouldBe 1 1)
