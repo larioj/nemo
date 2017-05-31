@@ -1,12 +1,21 @@
-name:              Graph
-version:           1.0
-Build-Type:        Simple
-cabal-version:     >= 1.2
+name:               Graph
+version:            1.0
+Build-Type:         Simple
+cabal-version:      >= 1.2
+author:             Jesus E. Larios Murillo
+license:            BSD3
+license-file:       LICENSE
+extra-source-files: README.md
 
 executable Graph
-  main-is:         Main.hs
-  hs-source-dirs:  src
-  build-depends:   base
-                 , containers
-                 , transformers
-                 , filepath
+  main-is:          Main.hs
+  hs-source-dirs:   src
+  build-depends:    base
+                  , containers
+                  , transformers
+                  , filepath
+
+test-suite GraphTest
+  type:             exitcode-stdio-1.0
+  main-is:          Spec.hs
+  hs-source-dirs:   test
