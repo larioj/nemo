@@ -50,13 +50,5 @@ getDependencyClone :: Ord k => Graph k -> k -> k
 getDependencyClone cloneGraph dep =
     head . Set.elems . findWithDefault (Set.singleton dep) dep $ cloneGraph
 
-upgrade :: Ord k => Nemo k -> k -> k -> Maybe (Nemo k)
-upgrade (dependencyGraph, predecessorGraph, cloneGraph) old new =
-    if' (elem new succs) (Just newState) Nothing
-    where
-        successorGraph = inverse predecessorGraph
-        succs = successors successorGraph old
-        newState = undefined -- TODO: change the state given the new version
-
 successors :: Ord k => Graph k -> k -> [k]
 successors g k = dfv (Set.singleton k) Set.empty (flip (:)) [] g
