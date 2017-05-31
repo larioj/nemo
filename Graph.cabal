@@ -14,8 +14,11 @@ executable Graph
                   , containers
                   , transformers
                   , filepath
+                  , hspec
 
 test-suite GraphTest
   type:             exitcode-stdio-1.0
   main-is:          Spec.hs
   hs-source-dirs:   test
+  build-depends:    base
+                  , hspec
