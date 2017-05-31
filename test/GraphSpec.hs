@@ -1,32 +1,14 @@
 module GraphSpec (spec) where
 
 import Test.Hspec
-import qualified Data.Set as Set
-import qualified Data.Map as Map
-
 import Graph
-    ( Graph
-    , topoSort
-    , fromList
-    , toList
+    ( topoSort
     , inverse
     )
-import Util
-    ( putShowLn
-    )
-
-someGraph :: Graph Int
-someGraph = fromList [(1, [2, 4]), (2, [3]), (3, []), (4, [3]), (5, [])]
-
-test1 = topoSort someGraph
-test2 = toList . inverse $ someGraph
-
-runTest =
-    putShowLn test1 >>
-    putShowLn (toList someGraph) >>
-    putShowLn test2
+import Examples
 
 spec :: Spec
-spec = describe "A passing test" $ do
-    it "should pass" $ do
-        (shouldBe 1 2)
+spec = do
+    describe "The topoSort method" $ do
+        it "should topologically sort a Graph" $ do
+            topoSort graphA `shouldBe` (e : a : c : b : d : [])
