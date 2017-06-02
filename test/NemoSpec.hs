@@ -7,7 +7,8 @@ import Nemo
     , successors
     )
 
-shadow _ k = k ++ "-clone"
+shadow _ k = (k', k')
+    where k' = k ++ "-clone"
 syncShadow = sync shadow
 
 spec :: Spec
@@ -19,5 +20,3 @@ spec = do
     describe "The successors method" $ do
         it "should return the list of all decendents of an element" $ do
             successors graphB a `shouldBe` aSuccessorsGraphB
-
-

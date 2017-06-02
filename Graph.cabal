@@ -15,6 +15,7 @@ library
                   , transformers
                   , filepath
                   , hspec
+                  , MissingH
   exposed-modules:  File
                   , Graph
                   , Nemo
@@ -37,3 +38,4 @@ test-suite GraphTest
                   , Graph
                   , hspec
                   , containers
+                  , MissingH

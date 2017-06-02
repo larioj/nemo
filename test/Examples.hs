@@ -1,5 +1,6 @@
 module Examples where
 
+import qualified Data.Map as Map
 import Graph
     ( Graph
     , graph
@@ -21,6 +22,8 @@ c = "c"
 d = "d"
 e = "e"
 
+repMapA = Map.fromList . fmap (\k -> (k, k)) $ [a, b, c, d, e]
+
 graphA = graph
     [ (a, [b, c])
     ,     (b, [d])
@@ -39,7 +42,8 @@ graphAInverse =
         ]
 
 nemoA =
-    ( graphA
+    ( repMapA
+    , graphA
     , empty :: Graph String
     , empty :: Graph String
     )

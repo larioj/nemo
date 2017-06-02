@@ -2,6 +2,8 @@ module Nemo
     ( Nemo
     , sync
     , successors
+    , getDependencyClone
+    , empty
     ) where
 
 import qualified Data.Set as Set
@@ -10,7 +12,8 @@ import Data.Set
     )
 import qualified Data.Map as Map
 import Data.Map
-    ( findWithDefault
+    ( Map
+    , findWithDefault
     )
 import Graph
     ( Graph
@@ -20,30 +23,31 @@ import Util
     ( if'
     )
 
-type Nemo k = (Graph k, Graph k, Graph k)
+type Nemo k v = (Map k v, Graph k, Graph k, Graph k)
 
-sync :: Ord k => (Nemo k -> k -> k) -> Nemo k -> Nemo k
-sync f (dependencyGraph, predecessorGraph, cloneGraph) =
+sync :: Ord k => (Nemo k v -> k -> (k, v)) -> Nemo k v -> Nemo k v
+sync f (representationMap, dependencyGraph, predecessorGraph, cloneGraph) =
     dfv seeds ctl accfn init dependencyGraph
     where
         seeds = Map.keysSet dependencyGraph
         ctl = Set.fromList . concat . map Set.toList . Map.elems $ cloneGraph
         accfn = sync' f
-        init = (dependencyGraph, predecessorGraph,cloneGraph)
+        init = (representationMap, dependencyGraph, predecessorGraph, cloneGraph)
 
-sync' :: Ord k => (Nemo k -> k -> k) -> Nemo k -> k -> Nemo k
-sync' f (dependencyGraph, predecessorGraph, cloneGraph) original =
+sync' :: Ord k => (Nemo k v -> k -> (k, v)) -> Nemo k v -> k -> Nemo k v
+sync' f (representationMap, dependencyGraph, predecessorGraph, cloneGraph) original =
     if' ((Set.singleton clone) == oldClone) sameState changedState
     where
-        sameState = (dependencyGraph, predecessorGraph, cloneGraph)
+        sameState = (representationMap, dependencyGraph, predecessorGraph, cloneGraph)
         originalDependencies = findWithDefault Set.empty original dependencyGraph
-        clone = f (dependencyGraph, predecessorGraph, cloneGraph) original
+        (clone, representation) = f sameState original
         oldClone = findWithDefault Set.empty original cloneGraph
         cloneDependencies = Set.map (getDependencyClone cloneGraph) originalDependencies
         newDependencyGraph = Map.insert clone cloneDependencies dependencyGraph
         newCloneGraph = Map.insert original (Set.singleton clone) cloneGraph
         newPredecessorGraph = Map.insert clone oldClone predecessorGraph
-        changedState = (newDependencyGraph, newPredecessorGraph, newCloneGraph)
+        newRepresentationMap = Map.insert clone representation representationMap
+        changedState = (newRepresentationMap, newDependencyGraph, newPredecessorGraph, newCloneGraph)
 
 getDependencyClone :: Ord k => Graph k -> k -> k
 getDependencyClone cloneGraph dep =
@@ -51,3 +55,6 @@ getDependencyClone cloneGraph dep =
 
 successors :: Ord k => Graph k -> k -> [k]
 successors g k = dfv (Set.singleton k) Set.empty (flip (:)) [] g
+
+empty :: Nemo k v
+empty = (Map.empty, Map.empty, Map.empty, Map.empty)
