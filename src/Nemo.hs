@@ -15,7 +15,6 @@ import Data.Map
 import Graph
     ( Graph
     , dfv
-    , inverse
     )
 import Util
     ( if'

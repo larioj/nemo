@@ -47,23 +47,23 @@ dfFold f init g  = dfv (keysSet g) Set.empty f init g
 topoSort :: Ord k => Graph k -> [k]
 topoSort = dfFold (flip (:)) []
 
-fromList :: Ord k => [(k, [k])] -> Graph k
-fromList = Map.map Set.fromList . Map.fromList
+graph :: Ord k => [(k, [k])] -> Graph k
+graph = Map.map Set.fromList . Map.fromList
 
 empty :: Ord k => Graph k
-empty = fromList []
+empty = graph []
 
 toList :: Ord k => Graph k -> [(k, [k])]
 toList = Map.toList . Map.map Set.toList
 
-inverse :: Ord k => Graph k -> Graph k
-inverse g = foldWithKey invert init g
+invert :: Ord k => Graph k -> Graph k
+invert g = foldWithKey invertOne init g
     where
         keys = Set.toList . Map.keysSet $ g
         values = concat . map Set.toList . Map.elems $ g
         elems = union keys values
         init = Map.fromList . map (\k -> (k, Set.empty)) $ elems
-        invert v sk g = foldl (insert v) g (Set.toList sk)
+        invertOne v sk g = foldl (insert v) g (Set.toList sk)
         insert v g k = Map.insert k newv g
             where
                 oldv = findWithDefault Set.empty k g

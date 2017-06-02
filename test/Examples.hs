@@ -2,7 +2,7 @@ module Examples where
 
 import Graph
     ( Graph
-    , fromList
+    , graph
     , toList
     , empty
     )
@@ -21,7 +21,7 @@ c = "c"
 d = "d"
 e = "e"
 
-graphA = fromList
+graphA = graph
     [ (a, [b, c])
     ,     (b, [d])
     ,     (c, [d])
@@ -29,8 +29,21 @@ graphA = fromList
     , (e, [c])
     ]
 
+graphAInverse =
+    graph
+        [ (a, [])
+        , (b, [a])
+        , (c, [a, e])
+        , (d, [b, c])
+        , (e, [])
+        ]
+
 nemoA =
     ( graphA
     , empty :: Graph String
     , empty :: Graph String
     )
+
+graphB = graph [(a, [b]), (b, [c]), (c, [e]), (d, [a])]
+
+aSuccessorsGraphB = [a, b, c, e]

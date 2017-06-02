@@ -1,48 +1,23 @@
 module NemoSpec where
 
 import Test.Hspec
-import Graph
-    ( Graph
-    , fromList
-    , toList
-    , empty
-    )
+import Examples
 import Nemo
-    ( Nemo
-    , sync
+    ( sync
     , successors
     )
-import Util
-    ( putShowLn
-    )
-
-a = "a"
-b = "b"
-c = "c"
-d = "d"
-e = "e"
-someGraph = fromList [(a, [b, c]), (b, [d]), (c, [d]), (d, []), (e, [c])]
-someNemo = (someGraph, empty :: Graph String, empty :: Graph String)
 
 shadow _ k = k ++ "-clone"
-test1 = toList deps
-    where (deps, pred, clone) = sync shadow someNemo
-test2 = toList deps
-    where
-        someNemo' = sync shadow someNemo
-        (deps, pred, clone) = sync shadow someNemo'
-
-someSuccessorGraph = fromList [(a, [b]), (b, [c]), (c, [e]), (d, [a])]
-test3 = successors someSuccessorGraph a
-
-runTest :: IO ()
-runTest =
-    putShowLn test1 >>
-    putShowLn test2 >>
-    putStrLn "" >>
-    putShowLn test3
+syncShadow = sync shadow
 
 spec :: Spec
-spec = describe "A passing test" $ do
-    it "should pass" $ do
-        (shouldBe 1 1)
+spec = do
+    describe "The sync method" $ do
+        it "should leave an already synched state unchanged" $ do
+            syncShadow nemoA `shouldBe` (syncShadow . syncShadow $ nemoA)
+
+    describe "The successors method" $ do
+        it "should return the list of all decendents of an element" $ do
+            successors graphB a `shouldBe` aSuccessorsGraphB
+
+
