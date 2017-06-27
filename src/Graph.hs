@@ -68,3 +68,6 @@ invert g = foldWithKey invertOne init g
             where
                 oldv = findWithDefault Set.empty k g
                 newv = Set.insert v oldv
+
+successors :: Ord k => Graph k -> k -> Set k
+successors g k = Set.fromList $ dfv (Set.singleton k) Set.empty (flip (:)) [] g

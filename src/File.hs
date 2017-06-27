@@ -6,10 +6,12 @@ import System.FilePath.Posix
     , (</>)
     )
 
--- example
--- file: /foo/bar.txt
--- contents: hello world
--- File { "bar", ".txt", "/foo/", "hello world" }
+{- Example
+     file: /foo/bar.txt
+     contents: hello world
+       ->
+     File { "bar", ".txt", "/foo/", "hello world" }
+-}
 data File =
     File
         { name :: String

@@ -24,11 +24,12 @@ transform :: Graph String -> Graph String -> File -> File
 transform deps clones (File name ext dir contents) =
     (File newName ext dir newContents)
     where
-        newName = name ++ "-clone"
         dependencies = Set.toList . Map.findWithDefault Set.empty name $ deps
         replacements = map (\d -> (d, getDependencyClone clones d)) dependencies
         replaceDep contents (dep, clone) = replace dep clone contents
         newContents = foldl replaceDep contents replacements
+        len = length newContents
+        newName = name ++ "-clone" ++ (replicate len '!') ++ (show len)
 
 adapter :: Nemo String File -> String -> (String, File)
 adapter (reps, deps, _, clones) k = (name file, file)
@@ -65,10 +66,18 @@ rep4 = Map.insert d fileD rep3
 deps4 = Map.insert d (Set.fromList [b, c]) deps3
 nemo4 :: Nemo String File
 nemo4 = (rep4, deps4, preds3, clones3)
--- end schenario
+-- end scenario
+
+-- scenario: modifying a file
+fileA' = File a ".hs" "foo/bar/" ";;;"
+(rep5, deps5, preds5, clones5) = fileSync nemo4
+rep6 = Map.insert a fileA' rep5
+nemo6 :: Nemo String File
+nemo6 = (rep6, deps5, preds5, clones5)
+-- end scenario
 
 spec :: Spec
 spec = do
     describe "The sync method on files" $ do
         it "should do stuff" $ do
-            True `shouldBe` True
+            fileSync nemo6 `shouldBe` empty
