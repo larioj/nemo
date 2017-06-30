@@ -1,24 +1,13 @@
-module Nemo
-    ( Nemo
-    , sync
-    , empty
-    ) where
+module Nemo where
 
 import qualified Data.Set as Set
-import Data.Set
-    ( Set
-    )
 import qualified Data.Map as Map
 import Data.Map
     ( Map
-    , findWithDefault
     )
 import Graph
     ( Graph
     , dfv
-    )
-import Util
-    ( if'
     )
 import Data.Maybe
     ( catMaybes
@@ -34,7 +23,7 @@ data Nemo k v =
     Nemo
         { representationMap :: Map k v
         , nemoGraph         :: NemoGraph k
-        }
+        } deriving (Show, Eq)
 
 sync :: Ord k => (Nemo k v -> k -> (k, v)) -> Nemo k v -> Nemo k v
 sync cloneFn init@(Nemo rep g) =
@@ -45,11 +34,12 @@ sync cloneFn init@(Nemo rep g) =
         accfn = sync' cloneFn
 
 sync' :: Ord k => (Nemo k v -> k -> (k, v)) -> Nemo k v -> k -> Nemo k v
-sync' cloneFn old@(Nemo rep g) k = Nemo newRep newG
+sync' cloneFn old@(Nemo rep g) k = new
     where
         (clone, cloneRep) = cloneFn old k
         newRep = Map.insert clone cloneRep rep
         newG = update k clone g
+        new = Nemo newRep newG
 
 empty :: Nemo k v
 empty = Nemo Map.empty (NemoGraph Map.empty Map.empty Map.empty)

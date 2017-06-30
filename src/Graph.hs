@@ -1,5 +1,8 @@
 module Graph where
 
+import Prelude hiding
+    ( lookup
+    )
 import qualified Data.Map as Map
 import Data.Map
     ( Map
@@ -13,6 +16,7 @@ import Data.Set
     )
 import Util
     ( ifM_
+    , allBefore
     )
 import StateCtl
     ( seen
@@ -36,7 +40,7 @@ dfv seeds ctl f init g = runStateCtl (dfv' seeds) $ (init, ctl)
             forM_ (Set.toList ks) (\k ->
                 ifM_ (seen k) (return ()) (
                     record k >>
-                    (dfv' (findWithDefault Set.empty k  g)) >>
+                    (dfv' (lookup k  g)) >>
                     transform f k
                 )
             )
@@ -71,3 +75,12 @@ invert g = foldWithKey invertOne init g
 
 successors :: Ord k => Graph k -> k -> Set k
 successors g k = Set.fromList $ dfv (Set.singleton k) Set.empty (flip (:)) [] g
+
+lookup :: Ord k => k -> Graph k -> Set k
+lookup k g = findWithDefault Set.empty k g
+
+isSuccessor :: Ord k => Graph k -> k -> k -> Bool
+isSuccessor g possibleSuccessor parent
+    | (parent == possibleSuccessor) = True
+    | otherwise =
+        any (isSuccessor g possibleSuccessor) (Graph.lookup parent g)

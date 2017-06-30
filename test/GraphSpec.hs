@@ -1,19 +1,36 @@
-module GraphSpec (spec) where
+module GraphSpec where
 
 import Test.Hspec
 import Graph
-    ( topoSort
-    , invert
-    , graph
+import Util
+import qualified Data.Set as Set
+
+topoSortProperty :: Ord k => Graph k -> [k] -> Bool
+topoSortProperty g sorted =
+    (flip all) sorted $ \element ->
+    (flip all) (allBefore element sorted) $ \before ->
+        not $ isSuccessor g before element
+
+graphA = graph
+    ( ("a", "b" : "c" : []) :
+      ("b", "c" : []) :
+      ("d", "b" : []) :
+      ("e", "c" : []) :
+      []
     )
-import Examples
 
 spec :: Spec
 spec = do
-    describe "The topoSort method" $ do
-        it "should topologically sort a Graph" $ do
-            topoSort graphA `shouldBe` (e : a : c : b : d : [])
+    describe "The successors method" $ do
+        it "should return all the succesors of an element in a graph" $ do
+            successors graphA "d" `shouldBe` Set.fromList ("d" : "b" : "c" : [])
 
-    describe "The invert method" $ do
-        it "should invert a graph" $ do
-            invert graphA `shouldBe` graphAInverse
+    describe "The isSuccessor method" $ do
+        it "should return true when an element is a successor" $ do
+            isSuccessor graphA "c" "d" `shouldBe` True
+        it "should return false when an element is not a successor" $ do
+            isSuccessor graphA "d" "c" `shouldBe` False
+
+    describe "The topoSort method" $ do
+        it "should return a list with the topological sort property" $ do
+            topoSortProperty graphA (topoSort graphA)

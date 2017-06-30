@@ -21,7 +21,7 @@ data NemoGraph k =
         { dependencyGraph  :: Graph k
         , predecessorGraph :: Map k (Maybe k)
         , cloneGraph       :: Map k (Maybe k)
-        }
+        } deriving (Show, Eq)
 
 dependencies :: Ord k => NemoGraph k -> k -> Set k
 dependencies g k =
@@ -75,8 +75,7 @@ update :: Ord k => k
                 -> k
                 -> NemoGraph k
                 -> NemoGraph k
-update k clone g =
-    insertClone k (Just clone) .
-    insertPredecessor clone (clonesPredecessor g k) .
-    insertDependencies clone (clonesDependencies g k) $ g
-
+update k cl g =
+    insertClone k (Just cl) .
+    insertPredecessor cl (clone g k) .
+    insertDependencies cl (clonesDependencies g k) $ g

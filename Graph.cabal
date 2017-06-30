@@ -18,6 +18,7 @@ library
                   , MissingH
   exposed-modules:  File
                   , Graph
+                  , NemoGraph
                   , Nemo
                   , StateCtl
                   , Util

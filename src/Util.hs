@@ -1,10 +1,4 @@
-module Util
-  ( choose
-  , if'
-  , putShowLn
-  , ifM
-  , ifM_
-  ) where
+module Util where
 
 choose :: a -> a -> Bool -> a
 choose a b cond = if cond then a else b
@@ -20,3 +14,7 @@ ifM cond a b = cond >>= choose a b
 
 ifM_ :: Monad m => m Bool -> m a -> m b -> m ()
 ifM_ cond a b = ifM cond (a >> return ()) (b >> return ())
+
+allBefore :: Eq a => a -> [a] -> [a]
+allBefore el =
+    takeWhile (/= el)
