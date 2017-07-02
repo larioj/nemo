@@ -30,7 +30,8 @@ library
                   , Hash
                   , Util
                   , EscapeRegex
-                  , Haskell
+                  , HaskellRead
+                  , HaskellTransform
 
 executable Graph
   main-is:          Main.hs

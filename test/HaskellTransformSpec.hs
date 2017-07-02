@@ -1,7 +1,7 @@
-module HaskellSpec where
+module HaskellTransformSpec where
 
 import Test.Hspec
-import Haskell
+import HaskellTransform
 import File
 import qualified Data.Map as Map
 import Graph

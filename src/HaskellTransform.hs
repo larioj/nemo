@@ -1,4 +1,4 @@
-module Haskell where
+module HaskellTransform where
 
 import Nemo
 import File
