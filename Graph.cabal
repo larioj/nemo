@@ -16,12 +16,21 @@ library
                   , filepath
                   , hspec
                   , MissingH
+                  , cryptohash
+                  , bytestring
+                  , base16-bytestring
+                  , text
+                  , regex-compat
+                  , regex-posix
   exposed-modules:  File
                   , Graph
                   , NemoGraph
                   , Nemo
                   , StateCtl
+                  , Hash
                   , Util
+                  , EscapeRegex
+                  , Haskell
 
 executable Graph
   main-is:          Main.hs
@@ -40,3 +49,5 @@ test-suite GraphTest
                   , hspec
                   , containers
                   , MissingH
+                  , regex-compat
+                  , regex-posix

@@ -7,10 +7,13 @@ import System.FilePath.Posix
     )
 
 {- Example
-     file: /foo/bar.txt
+     file: foo/bar.txt
      contents: hello world
        ->
      File { "bar", ".txt", "/foo/", "hello world" }
+
+   Note: directories are always relative to the root of the
+   project.
 -}
 data File =
     File
@@ -36,3 +39,7 @@ load p = fmap (File name ext dir) (readFile p)
 
 dump :: File -> IO ()
 dump f = writeFile (filePath f) (contents f)
+
+identifier :: File -> String
+identifier file =
+    (directory file) ++ (name file) ++ (extension file)
