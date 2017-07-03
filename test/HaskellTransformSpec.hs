@@ -75,7 +75,8 @@ spec = do
         it "should replace the name of an import" $ do
             replaceImport "Nemo" "NNeemmoo" contents2
                 `shouldBe` contents2'
-
+{-
     describe "The makeClone method" $ do
         it "should clone a file" $ do
             makeClone nemo (identifier nemoA) `shouldBe` ("", file)
+-}
