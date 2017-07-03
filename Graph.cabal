@@ -22,6 +22,7 @@ library
                   , text
                   , regex-compat
                   , regex-posix
+                  , directory
   exposed-modules:  File
                   , Graph
                   , NemoGraph
@@ -32,6 +33,7 @@ library
                   , EscapeRegex
                   , HaskellRead
                   , HaskellTransform
+                  , Directory
 
 executable Graph
   main-is:          Main.hs
