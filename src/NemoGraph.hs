@@ -23,6 +23,9 @@ data NemoGraph k =
         , cloneGraph       :: Map k (Maybe k)
         } deriving (Show, Eq)
 
+empty :: NemoGraph k
+empty = NemoGraph Map.empty Map.empty Map.empty
+
 dependencies :: Ord k => NemoGraph k -> k -> Set k
 dependencies g k =
     findWithDefault Set.empty k (dependencyGraph g)

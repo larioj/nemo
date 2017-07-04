@@ -41,6 +41,8 @@ executable Graph
   default-language: Haskell2010
   build-depends:    base
                   , Graph
+                  , directory
+                  , filepath
 
 test-suite GraphTest
   type:             exitcode-stdio-1.0

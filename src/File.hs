@@ -4,7 +4,10 @@ import System.FilePath.Posix
     ( splitFileName
     , splitExtension
     , (</>)
+    , makeRelative
     )
+import System.Directory
+import Util
 
 {- Example
      file: foo/bar.txt
@@ -32,14 +35,26 @@ splitFilePath p = (dir, name, ext)
 filePath :: File -> FilePath
 filePath (File name ext dir _) = dir </> (name ++ ext)
 
-load :: FilePath -> IO File
-load p = fmap (File name ext dir) (readFile p)
+load :: FilePath -> FilePath -> IO File
+load root p =
+    fmap (File name ext dir) (readFile p)
     where
-        (name, ext, dir) = splitFilePath p
+        (name, ext, dir) = splitFilePath $ makeRelative root p
 
-dump :: File -> IO ()
-dump f = writeFile (filePath f) (contents f)
+loadAll :: FilePath -> [FilePath] -> IO [File]
+loadAll root paths =
+    sequence $ fmap (load root) paths
+
+dump :: FilePath -> File -> IO ()
+dump root f = writeFile (root </> filePath f) (contents f)
 
 identifier :: File -> String
 identifier file =
     (directory file) ++ (name file) ++ (extension file)
+
+readFileWithDefault :: String -> FilePath -> IO String
+readFileWithDefault defCont path =
+    ifM (doesPathExist path)
+        (readFile path)
+        (return defCont)
+

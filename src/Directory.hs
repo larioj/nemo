@@ -5,6 +5,15 @@ import System.Directory
 import Control.Monad
 import System.FilePath.Posix
 import Data.Traversable
+import Data.List (isInfixOf)
+
+ignorePaths :: [String] -> [FilePath] -> [FilePath]
+ignorePaths specs paths =
+    select (not . matchesSpec) paths
+    where
+        canonSpecs = fmap splitPath specs
+        matchesSpec path =
+            any (`isInfixOf` splitPath path) canonSpecs
 
 listDirectoryRecursively :: FilePath -> IO [FilePath]
 listDirectoryRecursively root =
@@ -18,7 +27,7 @@ listDirectoryRecursively root =
 -- Requires: Marker must be relative path to a file
 findParentWithMarker :: FilePath -> FilePath -> IO (Maybe FilePath)
 findParentWithMarker marker start =
-    ifM (doesFileExist (start </> marker))
+    ifM (doesPathExist (start </> marker))
         (return $ Just start)
         (case getParent start of
             Nothing -> return Nothing

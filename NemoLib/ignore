@@ -1,0 +1,10 @@
+[ ".git/"
+, ".gitignore"
+, ".idea/"
+, "Graph.cabal"
+, "Graph.iml"
+, "LICENSE"
+, "README.md"
+, "dist/"
+, "out/"
+]
