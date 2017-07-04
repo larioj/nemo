@@ -39,7 +39,7 @@ load :: FilePath -> FilePath -> IO File
 load root p =
     fmap (File name ext dir) (readFile p)
     where
-        (name, ext, dir) = splitFilePath $ makeRelative root p
+        (dir, name, ext) = splitFilePath $ makeRelative root p
 
 loadAll :: FilePath -> [FilePath] -> IO [File]
 loadAll root paths =

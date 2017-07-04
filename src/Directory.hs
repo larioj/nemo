@@ -7,14 +7,6 @@ import System.FilePath.Posix
 import Data.Traversable
 import Data.List (isInfixOf)
 
-ignorePaths :: [String] -> [FilePath] -> [FilePath]
-ignorePaths specs paths =
-    select (not . matchesSpec) paths
-    where
-        canonSpecs = fmap splitPath specs
-        matchesSpec path =
-            any (`isInfixOf` splitPath path) canonSpecs
-
 listDirectoryRecursively :: FilePath -> IO [FilePath]
 listDirectoryRecursively root =
     fmap concat $

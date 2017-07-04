@@ -12,6 +12,7 @@ import Hash
 import Util
 import NemoGraph
 import Graph
+import System.FilePath.Posix (takeExtension)
 
 haskellNemo :: [File] -> Nemo String File
 haskellNemo files =
@@ -27,6 +28,10 @@ haskellNemo files =
 
 selectHaskellFiles :: [File] -> [File]
 selectHaskellFiles = select isHaskellFile
+
+selectHaskellPaths :: [FilePath] -> [FilePath]
+selectHaskellPaths paths =
+    select ((==) ".hs" . takeExtension) paths
 
 isHaskellFile :: File -> Bool
 isHaskellFile file =

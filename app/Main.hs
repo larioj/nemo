@@ -6,11 +6,11 @@ import Directory
 import System.FilePath.Posix
 import File
 import Util
-
-configLocation = "NemoLib"
-ignoreLocation = "NemoLib/ignore"
-cloneLocation = "NemoLib/clones"
-predecessorLocation = "NemoLib/predecessors"
+import HaskellRead
+import Read
+import Nemo
+import NemoGraph
+import NemoConfig
 
 main :: IO ()
 main = getArgs >>= nemo
@@ -26,33 +26,18 @@ usage args = putStrLn $ "unrecognized arguments: " ++ show args
 
 init :: IO ()
 init =
-    createDirectoryIfMissing True "NemoLib"
+    createDirectoryIfMissing True configDir
 
 synch :: FilePath -> IO ()
 synch root = putStrLn "fatal: Not implemented"
 
 status :: FilePath -> IO ()
-status root =
-    getAllSources root >>= prettyPrintList
+status root = undefined
 
 withPreconditions :: (FilePath -> IO ()) -> IO ()
 withPreconditions inner =
     getCurrentDirectory >>= \cwd ->
-    findParentWithMarker configLocation cwd >>= \root ->
+    findParentWithMarker configDir cwd >>= \root ->
     case root of
         Nothing -> putStrLn "fatal: Not a nemo project"
         Just root -> inner root
-
-
-getIgnoreSpec :: FilePath -> IO [String]
-getIgnoreSpec root =
-    readFileWithDefault "[]" (root </> ignoreLocation) >>=
-    return . read
-
-getAllSources :: FilePath -> IO [FilePath]
-getAllSources root =
-    getIgnoreSpec root >>= \spec ->
-    listDirectoryRecursively root >>= \paths ->
-        return $ ignorePaths spec paths
-
-
