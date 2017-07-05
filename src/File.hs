@@ -23,6 +23,8 @@ data File =
         { name :: String
         , extension :: String
         , directory :: FilePath
+        , moduleRoot :: FilePath
+        , projectRoot :: FilePath
         , contents :: String
         } deriving (Eq, Show, Ord)
 
@@ -33,24 +35,27 @@ splitFilePath p = (dir, name, ext)
         (name, ext) = splitExtension fileName
 
 filePath :: File -> FilePath
-filePath (File name ext dir _) = dir </> (name ++ ext)
+filePath (File name ext dir mod proj _) =
+    proj </> mod </> dir </> (name ++ ext)
 
-load :: FilePath -> FilePath -> IO File
-load root p =
-    fmap (File name ext dir) (readFile p)
+load :: FilePath -> FilePath -> FilePath -> IO File
+load proj mod p =
+    fmap (File name ext dir mod proj) (readFile p)
     where
-        (dir, name, ext) = splitFilePath $ makeRelative root p
+        (dir, name, ext) = splitFilePath $ makeRelative (proj </> mod) p
 
-loadAll :: FilePath -> [FilePath] -> IO [File]
-loadAll root paths =
-    sequence $ fmap (load root) paths
+loadAll :: FilePath -> FilePath -> [FilePath] -> IO [File]
+loadAll proj mod paths =
+    sequence $ fmap (load proj mod) paths
 
-dump :: FilePath -> File -> IO ()
-dump root f = writeFile (root </> filePath f) (contents f)
+dump :: File -> IO ()
+dump f = writeFile (filePath f) (contents f)
 
 identifier :: File -> String
 identifier file =
-    (directory file) ++ (name file) ++ (extension file)
+    (moduleRoot file) </>
+    (directory file) </>
+    ((name file) ++ (extension file))
 
 readFileWithDefault :: String -> FilePath -> IO String
 readFileWithDefault defCont path =
