@@ -32,16 +32,16 @@ init =
     createDirectoryIfMissing True configDir
 
 synch :: FilePath -> IO ()
-synch root = putStrLn "fatal: Not implemented"
+synch projectRoot = putStrLn "fatal: Not implemented"
 
 status :: FilePath -> IO ()
-status root =
-    Read.getNemo root >>= \old ->
+status projectRoot =
+    Read.getNemo projectRoot >>= \old ->
     showNewFiles old (Update.update old)
 
 showNewFiles :: Nemo FilePath File -> Nemo FilePath File -> IO ()
-showNewFiles old new =
-    prettyPrintList diff
+showNewFiles old new@(Nemo reps _) =
+    prettyPrintList $ fmap (\p -> contents $ reps Map.! p) diff
     where
         getFiles = map fst . Map.toList . representationMap
         oldFiles = getFiles old
@@ -51,7 +51,7 @@ showNewFiles old new =
 withPreconditions :: (FilePath -> IO ()) -> IO ()
 withPreconditions inner =
     getCurrentDirectory >>= \cwd ->
-    findParentWithMarker configDir cwd >>= \root ->
-    case root of
+    findParentWithMarker configDir cwd >>= \projectRoot ->
+    case projectRoot of
         Nothing -> putStrLn "fatal: Not a nemo project"
-        Just root -> inner root
+        Just projectRoot -> inner projectRoot

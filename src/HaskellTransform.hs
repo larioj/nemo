@@ -9,6 +9,7 @@ import Data.List.Utils (replace)
 import Data.Set as Set
 import Data.Map as Map
 import Hash
+import System.FilePath.Posix ((</>))
 
 -- TODO: This module could be better
 
@@ -16,7 +17,7 @@ import Hash
 -- Requires: File must be relative to root of project
 fileToModule :: File -> String
 fileToModule file =
-    replace "/" "." $ (name file) ++ (directory file)
+    replace "/" "." $ (directory file) </> (name file)
 
 importRegex :: String -> String
 importRegex mod =

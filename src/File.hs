@@ -28,6 +28,20 @@ data File =
         , contents :: String
         } deriving (Eq, Show, Ord)
 
+file :: String
+     -> String
+     -> FilePath
+     -> FilePath
+     -> FilePath
+     -> String
+     -> File
+file name ext dir mod proj cont =
+    File name ext (san dir) (san mod) (san proj) cont
+    where
+        san "." = ""
+        san "./" = ""
+        san s = s
+
 splitFilePath :: FilePath -> (FilePath, String, String)
 splitFilePath p = (dir, name, ext)
     where
@@ -40,8 +54,9 @@ filePath (File name ext dir mod proj _) =
 
 load :: FilePath -> FilePath -> FilePath -> IO File
 load proj mod p =
-    fmap (File name ext dir mod proj) (readFile p)
+    fmap (file name ext dir mod proj) (readFile abs)
     where
+        abs = proj </> mod </> p
         (dir, name, ext) = splitFilePath $ makeRelative (proj </> mod) p
 
 loadAll :: FilePath -> FilePath -> [FilePath] -> IO [File]

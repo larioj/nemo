@@ -18,9 +18,10 @@ import Control.Monad (forM)
 getNemo :: FilePath -> IO (Nemo String File)
 getNemo projectRoot =
     getAllFiles projectRoot >>= \files ->
-    getDependencyGraph projectRoot files >>= \deps ->
     getCloneGraph projectRoot >>= \clones ->
     getPredecessorGraph projectRoot >>= \preds ->
+    let reps = toRepresentation files
+        deps = getDependencyGraph reps projectRoot files in
         return $ Nemo (toRepresentation files) $ NemoGraph {
             dependencyGraph = deps,
             cloneGraph = clones,
@@ -38,8 +39,8 @@ getAllFiles projectRoot =
     fmap concat $
     getModuleRoots projectRoot >>= \moduleRoots ->
     forM moduleRoots $ \moduleRoot ->
-        getAllSources (projectRoot </> moduleRoot) >>=
-        loadAll projectRoot moduleRoot
+        getAllSources (projectRoot </> moduleRoot) >>= \sources ->
+        loadAll projectRoot moduleRoot sources
 
 getCloneGraph :: FilePath -> IO (Map String (Maybe String))
 getCloneGraph projectRoot = getMap projectRoot cloneFile
@@ -57,21 +58,17 @@ selectSupportedFiles = HaskellRead.selectHaskellFiles
 extractDependencies :: File -> [FilePath]
 extractDependencies = HaskellRead.extractDependencies
 
-getDependencies :: FilePath -> File -> IO [FilePath]
-getDependencies projectRoot file =
-    fmap catMaybes $ sequence $
-    (flip fmap) (Read.extractDependencies file) $ \dep ->
-        ifM (doesFileExist $ projectRoot </> dep)
-            (return $ Just dep)
-            (return Nothing)
+getDependencies :: Map FilePath File -> FilePath -> File -> [FilePath]
+getDependencies reps projectRoot file =
+    catMaybes $ (flip fmap) (Read.extractDependencies file) $ \dep ->
+        if' (Map.member dep reps) (Just dep) Nothing
 
-getDependencyGraph :: FilePath -> [File] -> IO (Graph String)
-getDependencyGraph projectRoot files =
-    fmap graph $ sequence $ fmap idAndDep files
+getDependencyGraph :: Map FilePath File -> FilePath -> [File] -> Graph String
+getDependencyGraph reps projectRoot files =
+    graph $ fmap idAndDep files
     where
         idAndDep file =
-            getDependencies projectRoot file >>= \deps ->
-            return (identifier file, deps)
+            (identifier file, getDependencies reps projectRoot file)
 
 getIgnoreSpec :: FilePath -> IO [String]
 getIgnoreSpec projectRoot =
