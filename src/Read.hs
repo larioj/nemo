@@ -9,10 +9,22 @@ import HaskellRead
 import Util
 import Data.List (isInfixOf)
 import Nemo
+import System.Directory (doesFileExist)
+import Data.Maybe (catMaybes)
+import Graph
+import NemoGraph
 
-
-getNemo :: FilePath -> Nemo String File
-getNemo = undefined
+getNemo :: FilePath -> IO (Nemo String File)
+getNemo root =
+    getAllFiles root >>= \files ->
+    getDependencyGraph root files >>= \deps ->
+    getCloneGraph root >>= \clones ->
+    getPredecessorGraph root >>= \preds ->
+        return $ Nemo (toRepresentation files) $ NemoGraph {
+            dependencyGraph = deps,
+            cloneGraph = clones,
+            predecessorGraph = preds
+        }
 
 getIgnoreSpec :: FilePath -> IO [String]
 getIgnoreSpec root =
@@ -28,17 +40,37 @@ getAllFiles :: FilePath -> IO [File]
 getAllFiles root =
     getAllSources root >>= loadAll root
 
-getClones :: FilePath -> IO (Map String (Maybe String))
-getClones root = getMap root cloneFile
+getCloneGraph :: FilePath -> IO (Map String (Maybe String))
+getCloneGraph root = getMap root cloneFile
 
-getPredecessors :: FilePath -> IO (Map String (Maybe String))
-getPredecessors root = getMap root predecessorFile
+getPredecessorGraph :: FilePath -> IO (Map String (Maybe String))
+getPredecessorGraph root = getMap root predecessorFile
 
 selectSupportedPaths :: [FilePath] -> [FilePath]
 selectSupportedPaths = selectHaskellPaths
 
 selectSupportedFiles :: [File] -> [File]
 selectSupportedFiles = selectHaskellFiles
+
+-- TODO: will multiplex file types
+extractDependencies :: File -> [FilePath]
+extractDependencies = HaskellRead.extractDependencies
+
+getDependencies :: FilePath -> File -> IO [FilePath]
+getDependencies root file =
+    fmap catMaybes $ sequence $
+    (flip fmap) (Read.extractDependencies file) $ \dep ->
+        ifM (doesFileExist $ root </> dep)
+            (return $ Just dep)
+            (return Nothing)
+
+getDependencyGraph :: FilePath -> [File] -> IO (Graph String)
+getDependencyGraph root files =
+    fmap graph $ sequence $ fmap idAndDep files
+    where
+        idAndDep file =
+            getDependencies root file >>= \deps ->
+            return (identifier file, deps)
 
 getMap:: FilePath -> FilePath -> IO (Map String (Maybe String))
 getMap root path =
@@ -57,3 +89,7 @@ ignorePaths root specs paths =
         canonPaths = Prelude.map (makeRelative root) paths
         matchesSpec path =
             any (`isInfixOf` splitPath path) canonSpecs
+
+toRepresentation :: [File] -> Map FilePath File
+toRepresentation files =
+    Map.fromList $ fmap (\f -> (identifier f, f)) files
