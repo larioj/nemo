@@ -36,6 +36,7 @@ library
                   , Directory
                   , Read
                   , NemoConfig
+                  , Update
 
 executable Graph
   main-is:          Main.hs
@@ -45,6 +46,7 @@ executable Graph
                   , Graph
                   , directory
                   , filepath
+                  , containers
 
 test-suite GraphTest
   type:             exitcode-stdio-1.0

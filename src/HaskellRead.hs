@@ -14,18 +14,6 @@ import NemoGraph
 import Graph
 import System.FilePath.Posix (takeExtension)
 
-haskellNemo :: [File] -> Nemo String File
-haskellNemo files =
-    Nemo reps NemoGraph.empty {
-        dependencyGraph = deps,
-        cloneGraph = Map.empty,
-        predecessorGraph = Map.empty
-    }
-    where
-        haskellFiles = selectHaskellFiles files
-        reps = Map.fromList $ Prelude.map (\f -> (identifier f, f)) haskellFiles
-        deps = Graph.graph $ Prelude.map (\f -> (identifier f, extractDependencies f)) haskellFiles
-
 selectHaskellFiles :: [File] -> [File]
 selectHaskellFiles = select isHaskellFile
 

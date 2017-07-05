@@ -11,6 +11,9 @@ import Read
 import Nemo
 import NemoGraph
 import NemoConfig
+import Update
+import qualified Data.Map as Map
+import qualified Data.List as List
 
 main :: IO ()
 main = getArgs >>= nemo
@@ -32,7 +35,18 @@ synch :: FilePath -> IO ()
 synch root = putStrLn "fatal: Not implemented"
 
 status :: FilePath -> IO ()
-status root = undefined
+status root =
+    Read.getNemo root >>= \old ->
+    showNewFiles old (Update.update old)
+
+showNewFiles :: Nemo FilePath File -> Nemo FilePath File -> IO ()
+showNewFiles old new =
+    prettyPrintList diff
+    where
+        getFiles = map fst . Map.toList . representationMap
+        oldFiles = getFiles old
+        newFiles = getFiles new
+        diff = newFiles List.\\ oldFiles
 
 withPreconditions :: (FilePath -> IO ()) -> IO ()
 withPreconditions inner =
