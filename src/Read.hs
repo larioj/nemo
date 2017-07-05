@@ -5,7 +5,7 @@ import Directory
 import NemoConfig
 import System.FilePath.Posix
 import Data.Map as Map
-import HaskellRead
+import qualified HaskellRead
 import Util
 import Data.List (isInfixOf)
 import Nemo
@@ -48,10 +48,10 @@ getPredecessorGraph :: FilePath -> IO (Map String (Maybe String))
 getPredecessorGraph projectRoot = getMap projectRoot predecessorFile
 
 selectSupportedPaths :: [FilePath] -> [FilePath]
-selectSupportedPaths = selectHaskellPaths
+selectSupportedPaths = HaskellRead.selectHaskellPaths
 
 selectSupportedFiles :: [File] -> [File]
-selectSupportedFiles = selectHaskellFiles
+selectSupportedFiles = HaskellRead.selectHaskellFiles
 
 -- TODO: will multiplex file types
 extractDependencies :: File -> [FilePath]

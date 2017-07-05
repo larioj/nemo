@@ -53,7 +53,6 @@ dump f = writeFile (filePath f) (contents f)
 
 identifier :: File -> String
 identifier file =
-    (moduleRoot file) </>
     (directory file) </>
     ((name file) ++ (extension file))
 

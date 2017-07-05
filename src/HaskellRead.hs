@@ -45,6 +45,7 @@ captureModule importLine = mod
         (_, _, _, captures) = match
         mod = captures !! 1
 
+-- TODO: think about how to get rid of the raw construction of identifier
 moduleToIdentifier :: String -> String
 moduleToIdentifier mod =
     replace "." "/" mod ++ ".hs"
