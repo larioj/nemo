@@ -45,7 +45,7 @@ fileSync :: Nemo String File -> Nemo String File
 fileSync = sync cloneFn
 
 aClone = "a-clone0"
-fileA = File "a" ".hs" "foo/bar/" ""
+fileA = File "a" ".hs" "foo/bar/" "" "" ""
 fileA' = fileA { name = "a-clone0" }
 repSingleFile = Map.fromList [("a", fileA)]
 repSingleFile' = Map.insert "a-clone0" fileA' repSingleFile
@@ -61,10 +61,10 @@ nemoSingleFileSpec =
         fileSync nemoSingleFile `shouldBe` nemoSingleFile'
 
 bClone = "b-clone8!!!!!!!!"
-fileB = File "b" ".hs" "foo/bar/" "a"
+fileB = File "b" ".hs" "foo/bar/" "" "" "a"
 fileB' = fileB { name = bClone, contents = "a-clone0" }
 cClone = "c-clone8!!!!!!!!"
-fileC = File "c" ".hs" "foo/bar/" "a"
+fileC = File "c" ".hs" "foo/bar/" "" "" "a"
 fileC' = fileC { name = cClone, contents = "a-clone0" }
 repThreeNewFiles = Map.fromList [("a", fileA), ("b", fileB), ("c", fileC)]
 repThreeNewFiles' =
@@ -91,7 +91,7 @@ nemoThreeNewFilesSpec =
 
 d = "d"
 dClone = "d-clone33" ++ (replicate 33 '!')
-fileD = File d ".hs" "foo/bar/" "b c"
+fileD = File d ".hs" "foo/bar/" "" "" "b c"
 fileD' = fileD { name = dClone, contents = bClone ++ " " ++ cClone }
 repAddingFile = Map.insert d fileD repThreeNewFiles'
 repAddingFile' = Map.insert dClone fileD' repAddingFile

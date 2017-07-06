@@ -7,4 +7,5 @@
 , "README.md"
 , "dist/"
 , "out/"
+, "test/Spec.hs"
 ]

@@ -8,6 +8,7 @@ import System.FilePath.Posix
     )
 import System.Directory
 import Util
+import NemoPath
 
 {- Example
      file: foo/bar.txt
@@ -59,9 +60,9 @@ load proj mod p =
         abs = proj </> mod </> p
         (dir, name, ext) = splitFilePath $ makeRelative (proj </> mod) p
 
-loadAll :: FilePath -> FilePath -> [FilePath] -> IO [File]
-loadAll proj mod paths =
-    sequence $ fmap (load proj mod) paths
+loadAll :: [NemoPath] -> IO [File]
+loadAll paths =
+    sequence $ fmap (\(NemoPath proj mod path) -> load proj mod path) paths
 
 dump :: File -> IO ()
 dump f = writeFile (filePath f) (contents f)

@@ -14,6 +14,7 @@ import NemoConfig
 import Update
 import qualified Data.Map as Map
 import qualified Data.List as List
+import Data.Maybe (catMaybes)
 
 main :: IO ()
 main = getArgs >>= nemo
@@ -40,13 +41,15 @@ status projectRoot =
     showNewFiles old (Update.update old)
 
 showNewFiles :: Nemo FilePath File -> Nemo FilePath File -> IO ()
-showNewFiles old new@(Nemo reps _) =
-    prettyPrintList $ fmap (\p -> contents $ reps Map.! p) diff
+showNewFiles old new =
+    prettyPrintList clean
     where
-        getFiles = map fst . Map.toList . representationMap
+        getFiles = Map.toList . cloneGraph . nemoGraph
         oldFiles = getFiles old
         newFiles = getFiles new
         diff = newFiles List.\\ oldFiles
+        wrap (a, mb) = fmap (\b -> (a, b)) mb
+        clean = catMaybes $ fmap wrap diff
 
 withPreconditions :: (FilePath -> IO ()) -> IO ()
 withPreconditions inner =

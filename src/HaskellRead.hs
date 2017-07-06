@@ -19,7 +19,10 @@ selectHaskellFiles = select isHaskellFile
 
 selectHaskellPaths :: [FilePath] -> [FilePath]
 selectHaskellPaths paths =
-    select ((==) ".hs" . takeExtension) paths
+    select isHaskellFilePath paths
+
+isHaskellFilePath :: FilePath -> Bool
+isHaskellFilePath = (==) ".hs" . takeExtension
 
 isHaskellFile :: File -> Bool
 isHaskellFile file =

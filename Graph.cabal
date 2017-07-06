@@ -37,6 +37,7 @@ library
                   , Read
                   , NemoConfig
                   , Update
+                  , NemoPath
 
 executable Graph
   main-is:          Main.hs

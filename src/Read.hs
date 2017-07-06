@@ -14,6 +14,7 @@ import Data.Maybe (catMaybes)
 import Graph
 import NemoGraph
 import Control.Monad (forM)
+import NemoPath
 
 getNemo :: FilePath -> IO (Nemo String File)
 getNemo projectRoot =
@@ -28,19 +29,57 @@ getNemo projectRoot =
             predecessorGraph = preds
         }
 
-getAllSources :: FilePath -> IO [FilePath]
-getAllSources projectRoot =
-    getIgnoreSpec projectRoot >>= \spec ->
-    listDirectoryRecursively projectRoot >>= \paths ->
-        return $ selectSupportedPaths $ ignorePaths projectRoot spec paths
-
 getAllFiles :: FilePath -> IO [File]
 getAllFiles projectRoot =
+    getSelectedSources projectRoot >>= loadAll
+
+getSelectedSources :: FilePath -> IO [NemoPath]
+getSelectedSources projectRoot =
+    getIgnoreSpec projectRoot >>= \spec ->
+    getAllSources' projectRoot >>= \sources ->
+        return $ selectSources spec sources
+
+getAllSources' :: FilePath -> IO [NemoPath]
+getAllSources' projectRoot =
     fmap concat $
     getModuleRoots projectRoot >>= \moduleRoots ->
     forM moduleRoots $ \moduleRoot ->
-        getAllSources (projectRoot </> moduleRoot) >>= \sources ->
-        loadAll projectRoot moduleRoot sources
+        getModuleRootSources projectRoot moduleRoot
+
+getModuleRootSources :: FilePath -> FilePath -> IO [NemoPath]
+getModuleRootSources projectRoot moduleRoot =
+    listDirectoryRecursively (projectRoot </> moduleRoot) >>= \paths ->
+        return $ fmap (nemoPath projectRoot moduleRoot) paths
+
+selectSources :: [FilePath] -> [NemoPath] -> [NemoPath]
+selectSources specs sources =
+    removeIgnoredNemoPaths specs $
+    selectSupportedNemoPaths sources
+
+selectSupportedNemoPaths :: [NemoPath] -> [NemoPath]
+selectSupportedNemoPaths paths =
+    select (isSupportedFilePath . toFilePath) paths
+
+isSupportedFilePath :: FilePath -> Bool
+isSupportedFilePath = HaskellRead.isHaskellFilePath
+
+removeIgnoredNemoPaths :: [FilePath] -> [NemoPath] -> [NemoPath]
+removeIgnoredNemoPaths spec paths =
+    select (not . isIgnoredNemoPath spec) paths
+
+-- Requires: specs are relative to project root
+isIgnoredNemoPath :: [FilePath] -> NemoPath -> Bool
+isIgnoredNemoPath specs np =
+    any (`isInfixOf` canonPath) canonSpecs
+    where
+        canonSpecs = fmap splitPath specs
+        canonPath = splitPath $ (modulePart np) </> (filePart np)
+
+getAllSources :: FilePath -> FilePath -> IO [FilePath]
+getAllSources projectRoot moduleRoot =
+    getIgnoreSpec projectRoot >>= \spec ->
+    listDirectoryRecursively (projectRoot </> moduleRoot) >>= \paths ->
+        return $ selectSupportedPaths $ ignorePaths projectRoot moduleRoot spec paths
 
 getCloneGraph :: FilePath -> IO (Map String (Maybe String))
 getCloneGraph projectRoot = getMap projectRoot cloneFile
@@ -89,12 +128,12 @@ readListFile :: Read a => FilePath -> FilePath -> IO [a]
 readListFile projectRoot path =
     readFileWithDefault "[]" (projectRoot </> path) >>= return . read
 
-ignorePaths :: FilePath -> [String] -> [FilePath] -> [FilePath]
-ignorePaths projectRoot specs paths =
+ignorePaths :: FilePath -> FilePath -> [String] -> [FilePath] -> [FilePath]
+ignorePaths projectRoot moduleRoot specs paths =
     select (not . matchesSpec) canonPaths
     where
         canonSpecs = fmap splitPath specs
-        canonPaths = Prelude.map (makeRelative projectRoot) paths
+        canonPaths = Prelude.map (makeRelative projectRoot . (moduleRoot </>)) paths
         matchesSpec path =
             any (`isInfixOf` splitPath path) canonSpecs
 

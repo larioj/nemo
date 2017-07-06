@@ -22,10 +22,10 @@ contents2' =
     "import NNeemmoo \n" ++
     "import Bar"
 
-file = File "" "" "" ""
+emptyFile = File "" "" "" "" "" ""
 
 nemoA =
-    file {
+    emptyFile {
         name = "NemoA",
         extension = ".hs",
         directory = "",
@@ -35,7 +35,7 @@ nemoA =
     }
 
 nemoB =
-    file {
+    emptyFile {
         name = "NemoB",
         extension = ".hs",
         directory = "",

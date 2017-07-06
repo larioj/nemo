@@ -4,10 +4,10 @@ import Test.Hspec
 import HaskellRead
 import File
 
-file = File "" "" "" ""
+emptyFile = File "" "" "" "" "" ""
 
 fileA =
-    file {
+    emptyFile {
         contents =
             "module FileA where\n\n" ++
             "import Foo.Bar.NemoA as A\n" ++
