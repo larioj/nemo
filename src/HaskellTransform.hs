@@ -5,11 +5,12 @@ import File
 import EscapeRegex
 import NemoGraph
 import Text.Regex.Posix
-import Data.List.Utils (replace)
 import Data.Set as Set
 import Data.Map as Map
 import Hash
 import System.FilePath.Posix ((</>))
+import Data.Maybe (fromMaybe)
+import Util
 
 -- TODO: This module could be better
 
@@ -17,7 +18,7 @@ import System.FilePath.Posix ((</>))
 -- Requires: File must be relative to root of project
 fileToModule :: File -> String
 fileToModule file =
-    replace "/" "." $ (directory file) </> (name file)
+    replaceSafe "/" "." $ (directory file) </> (name file)
 
 importRegex :: String -> String
 importRegex mod =
@@ -33,23 +34,26 @@ replaceImport old new contents =
     where
         imports = extractImports old contents
         substituteImport contents oldImport =
-            replace oldImport newImport contents
-            where newImport = replace old new oldImport
+            replaceSafe oldImport newImport contents
+            where newImport = replaceSafe old new oldImport
 
 replaceModuleDeclaration :: String -> String -> String -> String
 replaceModuleDeclaration old new contents =
-    replace oldMod newMod contents
+    fromMaybe contents $ -- TODO: add precheck that discards file that are not well formed
+    oldMod >>= \oldMod ->
+    newMod >>= \newMod ->
+        return $ replaceSafe oldMod newMod contents
     where
         oldMod = extractModuleDeclaration old contents
-        newMod = replace old new oldMod
+        newMod = fmap (replaceSafe old new) oldMod
 
 extractImports :: String -> String -> [String]
 extractImports mod contents =
     getAllTextMatches $ contents =~ (importRegex mod)
 
-extractModuleDeclaration :: String -> String -> String
+extractModuleDeclaration :: String -> String -> Maybe String
 extractModuleDeclaration mod contents =
-    contents =~ moduleRegex mod
+    contents =~~ moduleRegex mod
 
 replaceDependency' :: File -> File -> File -> File
 replaceDependency' old new file =

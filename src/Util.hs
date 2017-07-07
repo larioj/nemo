@@ -1,6 +1,7 @@
 module Util where
 
 import Data.List (intercalate)
+import Data.List.Utils (replace)
 
 choose :: a -> a -> Bool -> a
 choose a b cond = if cond then a else b
@@ -29,3 +30,7 @@ allBefore el =
 
 select :: (a -> Bool) -> [a] -> [a]
 select = filter
+
+replaceSafe :: Eq a => [a] -> [a] -> [a] -> [a]
+replaceSafe [] _ _ = error "The first argument to replaceSafe must not be []"
+replaceSafe old new cont = replace old new cont

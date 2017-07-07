@@ -5,7 +5,6 @@ import File
 import EscapeRegex
 import NemoGraph
 import Text.Regex.Posix
-import Data.List.Utils (replace)
 import Data.Set as Set
 import Data.Map as Map
 import Hash
@@ -51,4 +50,4 @@ captureModule importLine = mod
 -- TODO: think about how to get rid of the raw construction of identifier
 moduleToIdentifier :: String -> String
 moduleToIdentifier mod =
-    replace "." "/" mod ++ ".hs"
+    replaceSafe "." "/" mod ++ ".hs"
