@@ -10,6 +10,7 @@ extra-source-files: README.md
 library
   hs-source-dirs:   src
   default-language: Haskell2010
+  ghc-options:      -Wall
   build-depends:    base
                   , containers
                   , transformers
@@ -42,6 +43,7 @@ library
 executable Graph
   main-is:          Main.hs
   hs-source-dirs:   app
+  ghc-options:      -Wall
   default-language: Haskell2010
   build-depends:    base
                   , Graph
@@ -53,6 +55,7 @@ test-suite GraphTest
   type:             exitcode-stdio-1.0
   main-is:          Spec.hs
   default-language: Haskell2010
+  ghc-options:      -Wall
   hs-source-dirs:   test
   build-depends:    base
                   , Graph

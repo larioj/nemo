@@ -1,20 +1,20 @@
 module Read where
 
-import File
-import Directory
-import NemoConfig
-import System.FilePath.Posix
-import Data.Map as Map
+import           Control.Monad         (forM)
+import           Data.List             (isInfixOf)
+import           Data.Map              as Map
+import           Data.Maybe            (catMaybes)
+import           Directory
+import           File
+import           Graph
 import qualified HaskellRead
-import Util
-import Data.List (isInfixOf)
-import Nemo
-import System.Directory (doesFileExist)
-import Data.Maybe (catMaybes)
-import Graph
-import NemoGraph
-import Control.Monad (forM)
-import NemoPath
+import           Nemo
+import           NemoConfig
+import           NemoGraph
+import           NemoPath
+import           System.Directory      (doesFileExist)
+import           System.FilePath.Posix
+import           Util
 
 getNemo :: FilePath -> IO (Nemo String File)
 getNemo projectRoot =
@@ -36,11 +36,11 @@ getAllFiles projectRoot =
 getSelectedSources :: FilePath -> IO [NemoPath]
 getSelectedSources projectRoot =
     getIgnoreSpec projectRoot >>= \spec ->
-    getAllSources' projectRoot >>= \sources ->
+    getAllSources projectRoot >>= \sources ->
         return $ selectSources spec sources
 
-getAllSources' :: FilePath -> IO [NemoPath]
-getAllSources' projectRoot =
+getAllSources :: FilePath -> IO [NemoPath]
+getAllSources projectRoot =
     fmap concat $
     getModuleRoots projectRoot >>= \moduleRoots ->
     forM moduleRoots $ \moduleRoot ->
@@ -75,32 +75,15 @@ isIgnoredNemoPath specs np =
         canonSpecs = fmap splitPath specs
         canonPath = splitPath $ (subdirectory np) </> (filepath np)
 
-getAllSources :: FilePath -> FilePath -> IO [FilePath]
-getAllSources projectRoot moduleRoot =
-    getIgnoreSpec projectRoot >>= \spec ->
-    listDirectoryRecursively (projectRoot </> moduleRoot) >>= \paths ->
-        return $ selectSupportedPaths $ ignorePaths projectRoot moduleRoot spec paths
-
 getCloneGraph :: FilePath -> IO (Map String (Maybe String))
 getCloneGraph projectRoot = getMap projectRoot cloneFile
 
 getPredecessorGraph :: FilePath -> IO (Map String (Maybe String))
 getPredecessorGraph projectRoot = getMap projectRoot predecessorFile
 
-selectSupportedPaths :: [FilePath] -> [FilePath]
-selectSupportedPaths = HaskellRead.selectHaskellPaths
-
-selectSupportedFiles :: [File] -> [File]
-selectSupportedFiles = HaskellRead.selectHaskellFiles
-
 -- TODO: will multiplex file types
 extractDependencies :: File -> [FilePath]
 extractDependencies = HaskellRead.extractDependencies
-
-getDependencies :: Map FilePath File -> FilePath -> File -> [FilePath]
-getDependencies reps projectRoot file =
-    catMaybes $ (flip fmap) (Read.extractDependencies file) $ \dep ->
-        if' (Map.member dep reps) (Just dep) Nothing
 
 getDependencyGraph :: Map FilePath File -> FilePath -> [File] -> Graph String
 getDependencyGraph reps projectRoot files =
@@ -108,6 +91,11 @@ getDependencyGraph reps projectRoot files =
     where
         idAndDep file =
             (identifier file, getDependencies reps projectRoot file)
+
+getDependencies :: Map FilePath File -> FilePath -> File -> [FilePath]
+getDependencies reps projectRoot file =
+    catMaybes $ (flip fmap) (Read.extractDependencies file) $ \dep ->
+        if' (Map.member dep reps) (Just dep) Nothing
 
 getIgnoreSpec :: FilePath -> IO [String]
 getIgnoreSpec projectRoot =
@@ -127,15 +115,6 @@ getMap projectRoot path =
 readListFile :: Read a => FilePath -> FilePath -> IO [a]
 readListFile projectRoot path =
     readFileWithDefault "[]" (projectRoot </> path) >>= return . read
-
-ignorePaths :: FilePath -> FilePath -> [String] -> [FilePath] -> [FilePath]
-ignorePaths projectRoot moduleRoot specs paths =
-    select (not . matchesSpec) canonPaths
-    where
-        canonSpecs = fmap splitPath specs
-        canonPaths = Prelude.map (makeRelative projectRoot . (moduleRoot </>)) paths
-        matchesSpec path =
-            any (`isInfixOf` splitPath path) canonSpecs
 
 toRepresentation :: [File] -> Map FilePath File
 toRepresentation files =
