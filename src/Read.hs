@@ -49,7 +49,7 @@ getAllSources' projectRoot =
 getModuleRootSources :: FilePath -> FilePath -> IO [NemoPath]
 getModuleRootSources projectRoot moduleRoot =
     listDirectoryRecursively (projectRoot </> moduleRoot) >>= \paths ->
-        return $ fmap (nemoPath projectRoot moduleRoot) paths
+        return $ fmap (makeNemoPath projectRoot moduleRoot) paths
 
 selectSources :: [FilePath] -> [NemoPath] -> [NemoPath]
 selectSources specs sources =
@@ -73,7 +73,7 @@ isIgnoredNemoPath specs np =
     any (`isInfixOf` canonPath) canonSpecs
     where
         canonSpecs = fmap splitPath specs
-        canonPath = splitPath $ (modulePart np) </> (filePart np)
+        canonPath = splitPath $ (subdirectory np) </> (filepath np)
 
 getAllSources :: FilePath -> FilePath -> IO [FilePath]
 getAllSources projectRoot moduleRoot =
