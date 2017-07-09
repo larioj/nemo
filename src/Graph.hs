@@ -16,7 +16,6 @@ import Data.Set
     )
 import Util
     ( ifM_
-    , allBefore
     )
 import StateCtl
     ( seen

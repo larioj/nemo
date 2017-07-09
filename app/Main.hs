@@ -3,10 +3,8 @@ module Main where
 import System.Directory
 import System.Environment (getArgs)
 import Directory
-import System.FilePath.Posix
 import File
 import Util
-import HaskellRead
 import Read
 import Nemo
 import NemoGraph
@@ -33,7 +31,7 @@ init =
     createDirectoryIfMissing True configDir
 
 synch :: FilePath -> IO ()
-synch projectRoot = putStrLn "fatal: Not implemented"
+synch projectRoot = putStrLn $ "fatal: Not implemented" ++ projectRoot
 
 status :: FilePath -> IO ()
 status projectRoot =

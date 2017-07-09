@@ -1,16 +1,8 @@
 module HaskellRead where
 
-import Nemo
 import File
-import EscapeRegex
-import NemoGraph
 import Text.Regex.Posix
-import Data.Set as Set
-import Data.Map as Map
-import Hash
 import Util
-import NemoGraph
-import Graph
 import System.FilePath.Posix (takeExtension)
 
 selectHaskellFiles :: [File] -> [File]

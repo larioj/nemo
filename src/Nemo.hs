@@ -6,8 +6,7 @@ import Data.Map
     ( Map
     )
 import Graph
-    ( Graph
-    , dfv
+    ( dfv
     )
 import Data.Maybe
     ( catMaybes
@@ -26,7 +25,7 @@ data Nemo k v =
         } deriving (Show, Eq)
 
 sync :: Ord k => (Nemo k v -> k -> (k, v)) -> Nemo k v -> Nemo k v
-sync cloneFn init@(Nemo rep g) =
+sync cloneFn init@(Nemo _ g) =
     dfv seeds seen accfn init (dependencyGraph g)
     where
         seeds = Map.keysSet (dependencyGraph g)

@@ -4,7 +4,6 @@ import Data.Set
     ( Set
     , member
     , insert
-    , fromList
     )
 import Control.Monad.Trans.State
     ( State

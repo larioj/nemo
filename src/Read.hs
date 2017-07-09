@@ -12,7 +12,6 @@ import           Nemo
 import           NemoConfig
 import           NemoGraph
 import           NemoPath
-import           System.Directory      (doesFileExist)
 import           System.FilePath.Posix
 import           Util
 
@@ -22,7 +21,7 @@ getNemo projectRoot =
     getCloneGraph projectRoot >>= \clones ->
     getPredecessorGraph projectRoot >>= \preds ->
     let reps = toRepresentation files
-        deps = getDependencyGraph reps projectRoot files in
+        deps = getDependencyGraph reps files in
         return $ Nemo (toRepresentation files) $ NemoGraph {
             dependencyGraph = deps,
             cloneGraph = clones,
@@ -85,15 +84,15 @@ getPredecessorGraph projectRoot = getMap projectRoot predecessorFile
 extractDependencies :: File -> [FilePath]
 extractDependencies = HaskellRead.extractDependencies
 
-getDependencyGraph :: Map FilePath File -> FilePath -> [File] -> Graph String
-getDependencyGraph reps projectRoot files =
+getDependencyGraph :: Map FilePath File -> [File] -> Graph String
+getDependencyGraph reps files =
     graph $ fmap idAndDep files
     where
         idAndDep file =
-            (identifier file, getDependencies reps projectRoot file)
+            (identifier file, getDependencies reps file)
 
-getDependencies :: Map FilePath File -> FilePath -> File -> [FilePath]
-getDependencies reps projectRoot file =
+getDependencies :: Map FilePath File -> File -> [FilePath]
+getDependencies reps file =
     catMaybes $ (flip fmap) (Read.extractDependencies file) $ \dep ->
         if' (Map.member dep reps) (Just dep) Nothing
 

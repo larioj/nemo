@@ -4,8 +4,6 @@ import Util
 import System.Directory
 import Control.Monad
 import System.FilePath.Posix
-import Data.Traversable
-import Data.List (isInfixOf)
 
 listDirectoryRecursively :: FilePath -> IO [FilePath]
 listDirectoryRecursively root =

@@ -84,7 +84,7 @@ replaceName file =
         newContents = replaceModuleDeclaration oldModule newModule (contents file)
 
 makeClone :: Nemo String File -> String -> (String, File)
-makeClone nemo@(Nemo rep g) original = (identifier newFile, newFile)
+makeClone nemo@(Nemo rep _) original = (identifier newFile, newFile)
     where
         originalFile = rep Map.! original
         newFile = replaceName $ replaceDependencies nemo originalFile
