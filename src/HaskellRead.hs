@@ -1,29 +1,27 @@
 module HaskellRead where
 
-import File
-import Text.Regex.Posix
-import Util
-import System.FilePath.Posix (takeExtension)
+import           File
+import           System.FilePath.Posix (takeExtension)
+import           Text.Regex.Posix
+import           Util
 
-selectHaskellFiles :: [File] -> [File]
-selectHaskellFiles = select isHaskellFile
+isSupportedFilePath :: FilePath -> Bool
+isSupportedFilePath = (==) ".hs" . takeExtension
 
-selectHaskellPaths :: [FilePath] -> [FilePath]
-selectHaskellPaths paths =
-    select isHaskellFilePath paths
-
-isHaskellFilePath :: FilePath -> Bool
-isHaskellFilePath = (==) ".hs" . takeExtension
-
-isHaskellFile :: File -> Bool
-isHaskellFile file =
+-- TODO: check that the file has module
+isSupportedFile :: File -> Bool
+isSupportedFile file =
     (extension file) == ".hs"
 
 extractDependencies :: File -> [String]
 extractDependencies file =
-    Prelude.map (moduleToIdentifier . captureModule) imports
+    Prelude.map (moduleToFilePath . captureModule) imports
     where
         imports = extractImportExpressions file
+
+moduleToFilePath :: String -> FilePath
+moduleToFilePath mod =
+    replaceSafe "." "/" mod ++ ".hs"
 
 extractImportExpressions :: File -> [String]
 extractImportExpressions file =
@@ -38,8 +36,3 @@ captureModule importLine = mod
         match = importLine =~ importRegex :: (String, String, String, [String])
         (_, _, _, captures) = match
         mod = captures !! 1
-
--- TODO: think about how to get rid of the raw construction of identifier
-moduleToIdentifier :: String -> String
-moduleToIdentifier mod =
-    replaceSafe "." "/" mod ++ ".hs"

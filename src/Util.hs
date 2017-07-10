@@ -2,6 +2,7 @@ module Util where
 
 import Data.List (intercalate)
 import Data.List.Utils (replace)
+import System.Directory (doesPathExist)
 
 choose :: a -> a -> Bool -> a
 choose a b cond = if cond then a else b
@@ -34,3 +35,9 @@ select = filter
 replaceSafe :: Eq a => [a] -> [a] -> [a] -> [a]
 replaceSafe [] _ _ = error "The first argument to replaceSafe must not be []"
 replaceSafe old new cont = replace old new cont
+
+readFileWithDefault :: String -> FilePath -> IO String
+readFileWithDefault defCont path =
+    ifM (doesPathExist path)
+        (readFile path)
+        (return defCont)

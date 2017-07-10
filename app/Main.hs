@@ -8,7 +8,7 @@ import Util
 import Read
 import Nemo
 import NemoGraph
-import NemoConfig
+import Config
 import Update
 import qualified Data.Map as Map
 import qualified Data.List as List

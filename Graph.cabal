@@ -38,7 +38,7 @@ library
                   , HaskellTransform
                   , Directory
                   , Read
-                  , NemoConfig
+                  , Config
                   , Update
                   , NemoPath
 

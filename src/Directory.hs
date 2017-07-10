@@ -1,9 +1,9 @@
 module Directory where
 
-import Util
-import System.Directory
-import Control.Monad
-import System.FilePath.Posix
+import           Control.Monad
+import           System.Directory
+import           System.FilePath.Posix
+import           Util
 
 listDirectoryRecursively :: FilePath -> IO [FilePath]
 listDirectoryRecursively root =
@@ -20,7 +20,7 @@ findParentWithMarker marker start =
     ifM (doesPathExist (start </> marker))
         (return $ Just start)
         (case getParent start of
-            Nothing -> return Nothing
+            Nothing     -> return Nothing
             Just parent -> findParentWithMarker marker parent)
 
 getParent :: FilePath -> Maybe FilePath

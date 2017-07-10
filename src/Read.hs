@@ -7,13 +7,13 @@ import           Data.Maybe            (catMaybes)
 import           Directory
 import           File
 import           Graph
-import qualified HaskellRead
 import           Nemo
-import           NemoConfig
+import           Config
 import           NemoGraph
 import           NemoPath
 import           System.FilePath.Posix
 import           Util
+import ReadApi
 
 getNemo :: FilePath -> IO (Nemo String File)
 getNemo projectRoot =
@@ -59,8 +59,6 @@ selectSupportedNemoPaths :: [NemoPath] -> [NemoPath]
 selectSupportedNemoPaths paths =
     select (isSupportedFilePath . toFilePath) paths
 
-isSupportedFilePath :: FilePath -> Bool
-isSupportedFilePath = HaskellRead.isHaskellFilePath
 
 removeIgnoredNemoPaths :: [FilePath] -> [NemoPath] -> [NemoPath]
 removeIgnoredNemoPaths spec paths =
@@ -74,16 +72,6 @@ isIgnoredNemoPath specs np =
         canonSpecs = fmap splitPath specs
         canonPath = splitPath $ (subdirectory np) </> (filepath np)
 
-getCloneGraph :: FilePath -> IO (Map String (Maybe String))
-getCloneGraph projectRoot = getMap projectRoot cloneFile
-
-getPredecessorGraph :: FilePath -> IO (Map String (Maybe String))
-getPredecessorGraph projectRoot = getMap projectRoot predecessorFile
-
--- TODO: will multiplex file types
-extractDependencies :: File -> [FilePath]
-extractDependencies = HaskellRead.extractDependencies
-
 getDependencyGraph :: Map FilePath File -> [File] -> Graph String
 getDependencyGraph reps files =
     graph $ fmap idAndDep files
@@ -93,27 +81,8 @@ getDependencyGraph reps files =
 
 getDependencies :: Map FilePath File -> File -> [FilePath]
 getDependencies reps file =
-    catMaybes $ (flip fmap) (Read.extractDependencies file) $ \dep ->
+    catMaybes $ (flip fmap) (extractDependencies file) $ \dep ->
         if' (Map.member dep reps) (Just dep) Nothing
-
-getIgnoreSpec :: FilePath -> IO [String]
-getIgnoreSpec projectRoot =
-    readListFile projectRoot ignoreFile
-
-getModuleRoots :: FilePath -> IO [FilePath]
-getModuleRoots projectRoot =
-    fmap (\r -> if' (r == []) [""] r) roots
-    where
-        roots = readListFile projectRoot moduleRootsFile
-
-getMap:: FilePath -> FilePath -> IO (Map String (Maybe String))
-getMap projectRoot path =
-    readListFile projectRoot path >>=
-    return . Map.fromList . Prelude.map (\(k, v) -> (k, Just v))
-
-readListFile :: Read a => FilePath -> FilePath -> IO [a]
-readListFile projectRoot path =
-    readFileWithDefault "[]" (projectRoot </> path) >>= return . read
 
 toRepresentation :: [File] -> Map FilePath File
 toRepresentation files =

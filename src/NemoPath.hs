@@ -1,11 +1,6 @@
 module NemoPath where
 
 import System.FilePath.Posix
-    ( makeRelative
-    , (</>)
-    , isRelative
-    , isAbsolute
-    )
 
 data NemoPath =
     NemoPath
@@ -32,8 +27,8 @@ makeNemoPath project subdirectory filepath
         sfile = sanitize $ makeRelative absoluteSubdirectory filepath
 
 toFilePath :: NemoPath -> FilePath
-toFilePath (NemoPath proj mod file) =
-    proj </> mod </> file
+toFilePath path =
+    (project path) </> (subdirectory path) </> (filepath path)
 
 sanitize :: FilePath -> FilePath
 sanitize "."                = ""
