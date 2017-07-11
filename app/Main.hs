@@ -11,7 +11,7 @@ import           NemoGraph
 import           Read
 import           System.Directory
 import           System.Environment (getArgs)
-import           Update
+import           UpdateApi
 import           Util
 
 main :: IO ()
@@ -36,7 +36,7 @@ synch projectRoot = putStrLn $ "fatal: Not implemented" ++ projectRoot
 status :: FilePath -> IO ()
 status projectRoot =
     Read.getNemo projectRoot >>= \old ->
-    showNewFiles old (Update.update old)
+    showNewFiles old (UpdateApi.update old)
 
 showNewFiles :: Nemo FilePath File -> Nemo FilePath File -> IO ()
 showNewFiles old new =

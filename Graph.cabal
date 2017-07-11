@@ -35,11 +35,11 @@ library
                   , Util
                   , EscapeRegex
                   , HaskellRead
-                  , HaskellTransform
+                  , HaskellUpdate
                   , Directory
                   , Read
                   , Config
-                  , Update
+                  , UpdateApi
                   , NemoPath
 
 executable Graph

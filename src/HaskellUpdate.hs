@@ -1,4 +1,4 @@
-module HaskellTransform where
+module HaskellUpdate where
 
 import           Data.Map              as Map
 import           Data.Maybe            (fromMaybe)

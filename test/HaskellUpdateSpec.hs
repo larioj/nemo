@@ -1,9 +1,9 @@
-module HaskellTransformSpec where
+module HaskellUpdateSpec where
 
 import qualified Data.Map         as Map
 import           File
 import           Hash
-import           HaskellTransform
+import           HaskellUpdate
 import           NemoPath
 import           Read
 import           Test.Hspec
