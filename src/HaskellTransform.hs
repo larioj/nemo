@@ -88,7 +88,7 @@ extractModuleImportDeclarations mod contents =
 
 filePathToModule :: FilePath -> String
 filePathToModule path =
-    replaceSafe "/" "." $ takeExtension path
+    replaceSafe "/" "." $ dropExtension path
 
 importRegex :: String -> String
 importRegex mod =

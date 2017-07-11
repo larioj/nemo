@@ -2,81 +2,110 @@ module HaskellTransformSpec where
 
 import qualified Data.Map         as Map
 import           File
-import           Graph
+import           Hash
 import           HaskellTransform
-import           Nemo
-import           NemoGraph
+import           NemoPath
+import           Read
 import           Test.Hspec
 
-contents1 =
-    "import Nemo \n" ++
-    "import qualified Module.Foo as Foo \n" ++
-    "import  \t  Module.Bar hiding (bar)\n" ++
-    "import Baar\n" ++
-    "import qualified Baar as B\n"
+pathA = makeNemoPath "/usr/someusr" "sub" "FileA.hs"
+fileA =
+    makeFile
+        pathA $
+        "module FileA where\n\n" ++
+        "import Foo.Bar.FileB as A\n" ++
+        "import qualified NemoB as B\n\n" ++
+        "fileA = undefined\n"
+{-
+fileA2 =
+    makeFile
+        pathA $
+        "module FileA where\n\n" ++
+        "import Foo.Bar.FileB as A\n" ++
+        "import qualified NemoB as B\n\n" ++
+        "fileA = undefined\n" ++
+        "fileA2 = FileA.fileA\n"
+-}
 
-contents2 =
-    "import Nemo \n" ++
-    "import Bar"
-contents2' =
-    "import NNeemmoo \n" ++
-    "import Bar"
+pathB = makeNemoPath "/usr/someusr" "" "Foo/Bar/FileB.hs"
+fileB =
+    makeFile
+        pathB $
+        "module Foo.Bar.FileB\n\n" ++
+        "nemoA = undefined\n"
 
-emptyFile = File "" "" "" "" "" ""
-
-nemoA =
-    emptyFile {
-        name = "NemoA",
-        extension = ".hs",
-        directory = "",
-        contents =
-            "module NemoA where\n\n" ++
+hashB = base16AlphaHash $ contents fileB
+pathB' = makeNemoPath "/usr/someusr" "" ("Foo/Bar/FileB_" ++ hashB ++ ".hs")
+fileB' =
+    makeFile
+        pathB' $
+            "module Foo.Bar.FileB_" ++ hashB ++ "\n\n" ++
             "nemoA = undefined\n"
-    }
 
-nemoB =
-    emptyFile {
-        name = "NemoB",
-        extension = ".hs",
-        directory = "",
-        contents =
-            "module NemoB where \n\n" ++
-            "import qualified NemoA as A\n\n" ++
-            "nemoB = undefined\n"
-    }
+contA' =
+    "module FileA where\n\n" ++
+    "import Foo.Bar.FileB_" ++ hashB ++ " as A\n" ++
+    "import qualified NemoB as B\n\n" ++
+    "fileA = undefined\n"
+hashA = base16AlphaHash contA'
+pathA' = makeNemoPath "/usr/someusr" "sub" ("FileA_" ++ hashA ++ ".hs")
+fileA' =
+    makeFile
+        pathA' $
+        "module FileA_" ++ hashA ++ " where\n\n" ++
+        "import Foo.Bar.FileB_" ++ hashB ++ " as A\n" ++
+        "import qualified NemoB as B\n\n" ++
+        "fileA = undefined\n"
 
-rep = Map.fromList [(identifier nemoA, nemoA), (identifier nemoB, nemoB)]
-g = NemoGraph
-    (graph [(identifier nemoA, []), (identifier nemoB, [identifier nemoA])])
-    Map.empty
-    Map.empty
-nemo = Nemo rep g
+nemo = getNemo' [fileA, fileB] Map.empty Map.empty
+nemo2 = getNemo' [fileA, fileB, fileB'] Map.empty $
+    Map.fromList [(identifier fileB, Just $ identifier fileB')]
+
+badFile =
+    makeFile
+        (makeNemoPath "/Users/jlariosmurillo/Hobby/Graph" "test/" "Spec.hs") $
+        "{-# OPTIONS_GHC -F -pgmF hspec-discover #-}\n"
 
 spec :: Spec
 spec = do
-    describe "The importRegex method" $ do
-        it "should extract a haskell import" $ do
-            extractImports "Nemo" contents1
-                `shouldBe` ["import Nemo"]
+    describe "The replaceModuleWithHash method" $ do
+        it "should append hash to module name" $ do
+            shouldBe (replaceModuleWithHash fileA) $
+                let hash = base16AlphaHash $ contents fileA in
+                makeFile
+                    (makeNemoPath "/usr/someusr" "sub" ("FileA_" ++ hash ++ ".hs")) $
+                    "module FileA_" ++ hash ++ " where\n\n" ++
+                    "import Foo.Bar.FileB as A\n" ++
+                    "import qualified NemoB as B\n\n" ++
+                    "fileA = undefined\n"
 
-        it "should extract a haskell import with qualified" $ do
-            extractImports "Module.Foo" contents1
-                `shouldBe` ["import qualified Module.Foo"]
+        it "should not fail when given a bad file" $ do
+            shouldBe (replaceModuleWithHash badFile) $
+                let hash = base16AlphaHash $ contents badFile in
+                makeFile
+                    (makeNemoPath 
+                        "/Users/jlariosmurillo/Hobby/Graph" 
+                        "test/"
+                        $ "Spec_" ++ hash ++ ".hs") $
+                    "{-# OPTIONS_GHC -F -pgmF hspec-discover #-}\n"
 
-        it "should extract a haskell import with weird spacing" $ do
-            extractImports "Module.Bar" contents1
-                `shouldBe` ["import  \t  Module.Bar"]
-
-        it "should extract a haskell import multiple times" $ do
-            extractImports "Baar" contents1
-                `shouldBe` ["import Baar", "import qualified Baar"]
-
-    describe "The replaceImport method" $ do
-        it "should replace the name of an import" $ do
-            replaceImport "Nemo" "NNeemmoo" contents2
-                `shouldBe` contents2'
-{-
-    describe "The makeClone method" $ do
-        it "should clone a file" $ do
-            makeClone nemo (identifier nemoA) `shouldBe` ("", file)
+{- TODO: This should pass
+        it "should replace self references in methods" $ do
+            shouldBe (replaceModuleWithHash fileA2) $
+                let hash = base16AlphaHash $ contents fileA2 in
+                makeFile
+                    (makeNemoPath "/usr/someusr" "sub" ("FileA_" ++ hash ++ ".hs")) $
+                    "module FileA_" ++ hash ++ " where\n\n" ++
+                    "import Foo.Bar.FileB as A\n" ++
+                    "import qualified NemoB as B\n\n" ++
+                    "fileA = undefined\n" ++
+                    "fileA2 = FileA_" ++ hash ++ ".fileA\n"
 -}
+    describe "The makeClone method" $ do
+        it "should be able to create a correct clone" $ do
+            shouldBe (snd $ makeClone nemo $ identifier fileB) $
+                fileB'
+
+        it "should be able to create a correct clone with dependencies" $ do
+            shouldBe (snd $ makeClone nemo2 $ identifier fileA) $
+                fileA'

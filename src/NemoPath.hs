@@ -16,7 +16,7 @@ makeNemoPath project subdirectory filepath
     | isAbsolute ssub =
         error $ "NemoPath: subdirectory must be relative"
     | isAbsolute sfile =
-        error $ "NemoPath: filepath must be relative"
+        error $ "NemoPath: filepath must be relative "
     | isEmpty sfile =
         error $ "NemoPath: filepath must not be empty"
     | otherwise =

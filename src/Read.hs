@@ -18,15 +18,23 @@ import           Util
 getNemo :: FilePath -> IO (Nemo String File)
 getNemo projectRoot =
     getAllFiles projectRoot >>= \files ->
-    getCloneGraph projectRoot >>= \clones ->
     getPredecessorGraph projectRoot >>= \preds ->
-    let reps = toRepresentation files
-        deps = getDependencyGraph reps files in
-        return $ Nemo (toRepresentation files) $ NemoGraph {
-            dependencyGraph = deps,
-            cloneGraph = clones,
-            predecessorGraph = preds
-        }
+    getCloneGraph projectRoot >>= \clones ->
+        return $ getNemo' files preds clones
+
+getNemo' :: [File]
+            -> Map FilePath (Maybe FilePath)
+            -> Map FilePath (Maybe FilePath)
+            -> Nemo FilePath File
+getNemo' files preds clones =
+    Nemo reps NemoGraph {
+        dependencyGraph = deps,
+        predecessorGraph = preds,
+        cloneGraph = clones
+    }
+    where
+        reps = toRepresentation files
+        deps = getDependencyGraph reps files
 
 getAllFiles :: FilePath -> IO [File]
 getAllFiles projectRoot =
