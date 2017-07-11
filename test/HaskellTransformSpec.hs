@@ -83,8 +83,8 @@ spec = do
             shouldBe (replaceModuleWithHash badFile) $
                 let hash = base16AlphaHash $ contents badFile in
                 makeFile
-                    (makeNemoPath 
-                        "/Users/jlariosmurillo/Hobby/Graph" 
+                    (makeNemoPath
+                        "/Users/jlariosmurillo/Hobby/Graph"
                         "test/"
                         $ "Spec_" ++ hash ++ ".hs") $
                     "{-# OPTIONS_GHC -F -pgmF hspec-discover #-}\n"

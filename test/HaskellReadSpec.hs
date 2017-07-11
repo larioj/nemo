@@ -2,7 +2,7 @@ module HaskellReadSpec where
 
 import           File
 import           HaskellRead
-import NemoPath
+import           NemoPath
 import           Test.Hspec
 
 pathA = (makeNemoPath "/usr/someusr" "sub" "FileA.hs")
