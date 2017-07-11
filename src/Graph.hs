@@ -1,34 +1,14 @@
 module Graph where
 
-import Prelude hiding
-    ( lookup
-    )
-import qualified Data.Map as Map
-import Data.Map
-    ( Map
-    , findWithDefault
-    , foldWithKey
-    , keysSet
-    )
-import qualified Data.Set as Set
-import Data.Set
-    ( Set
-    )
-import Util
-    ( ifM_
-    )
-import StateCtl
-    ( seen
-    , record
-    , transform
-    , runStateCtl
-    )
-import Data.List
-    ( union
-    )
-import Control.Monad
-    ( forM_
-    )
+import           Control.Monad (forM_)
+import           Data.List     (union)
+import           Data.Map      (Map, findWithDefault, foldWithKey, keysSet)
+import qualified Data.Map      as Map
+import           Data.Set      (Set)
+import qualified Data.Set      as Set
+import           Prelude       hiding (lookup)
+import           StateCtl      (record, runStateCtl, seen, transform)
+import           Util          (ifM_)
 
 type Graph k = Map k (Set k)
 

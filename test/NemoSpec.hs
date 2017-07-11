@@ -1,12 +1,12 @@
 module NemoSpec where
 
-import Test.Hspec
-import Nemo
-import File
-import NemoGraph
-import qualified Data.Map as Map
-import qualified Data.Set as Set
-import HaskellTransform
+import qualified Data.Map         as Map
+import qualified Data.Set         as Set
+import           File
+import           HaskellTransform
+import           Nemo
+import           NemoGraph
+import           Test.Hspec
 
 file1 =
     File

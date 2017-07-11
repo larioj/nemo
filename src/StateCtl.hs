@@ -1,15 +1,7 @@
 module StateCtl where
 
-import Data.Set
-    ( Set
-    , member
-    , insert
-    )
-import Control.Monad.Trans.State
-    ( State
-    , state
-    , runState
-    )
+import           Control.Monad.Trans.State (State, runState, state)
+import           Data.Set                  (Set, insert, member)
 
 transform :: (a -> v -> a) -> v -> State (a, Set c) ()
 transform f v = state $ \(acc, ctl) -> ((), (f acc v, ctl))

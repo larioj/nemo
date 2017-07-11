@@ -1,20 +1,11 @@
 module NemoGraph where
 
-import Graph
-    ( Graph
-    )
-import qualified Data.Set as Set
-import Data.Set
-    ( Set
-    )
-import Data.Maybe
-    ( fromMaybe
-    )
-import qualified Data.Map as Map
-import Data.Map
-    ( Map
-    , findWithDefault
-    )
+import           Data.Map   (Map, findWithDefault)
+import qualified Data.Map   as Map
+import           Data.Maybe (fromMaybe)
+import           Data.Set   (Set)
+import qualified Data.Set   as Set
+import           Graph      (Graph)
 
 data NemoGraph k =
     NemoGraph

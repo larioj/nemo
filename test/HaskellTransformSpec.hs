@@ -1,12 +1,12 @@
 module HaskellTransformSpec where
 
-import Test.Hspec
-import HaskellTransform
-import File
-import qualified Data.Map as Map
-import Graph
-import NemoGraph
-import Nemo
+import qualified Data.Map         as Map
+import           File
+import           Graph
+import           HaskellTransform
+import           Nemo
+import           NemoGraph
+import           Test.Hspec
 
 contents1 =
     "import Nemo \n" ++

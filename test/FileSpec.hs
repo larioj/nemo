@@ -1,16 +1,16 @@
 module FileSpec where
 
-import qualified Data.Map as Map
-import Data.Map (Map)
-import qualified Data.Set as Set
-import Data.List.Utils (replace)
-import Data.List (intercalate)
-import Test.Hspec
-import Graph
-import File
-import Nemo
-import NemoGraph
-import Control.Arrow
+import           Control.Arrow
+import           Data.List       (intercalate)
+import           Data.List.Utils (replace)
+import           Data.Map        (Map)
+import qualified Data.Map        as Map
+import qualified Data.Set        as Set
+import           File
+import           Graph
+import           Nemo
+import           NemoGraph
+import           Test.Hspec
 
 cloneFn :: Nemo String File -> String -> (String, File)
 cloneFn (Nemo rep g) original = (name file, file)

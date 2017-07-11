@@ -1,11 +1,11 @@
 module NemoGraphSpec where
 
-import Test.Hspec
-import Graph
-import NemoGraph
-import qualified Data.Map as Map
-import qualified Data.Set as Set
-import Control.Arrow
+import           Control.Arrow
+import qualified Data.Map      as Map
+import qualified Data.Set      as Set
+import           Graph
+import           NemoGraph
+import           Test.Hspec
 
 depGraphA =
     ("a", "b" : "c" : []) :

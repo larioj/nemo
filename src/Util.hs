@@ -1,8 +1,8 @@
 module Util where
 
-import Data.List (intercalate)
-import Data.List.Utils (replace)
-import System.Directory (doesPathExist)
+import           Data.List        (intercalate)
+import           Data.List.Utils  (replace)
+import           System.Directory (doesPathExist)
 
 choose :: a -> a -> Bool -> a
 choose a b cond = if cond then a else b

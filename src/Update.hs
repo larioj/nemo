@@ -1,9 +1,9 @@
 module Update where
 
-import File
-import Nemo
-import Config
-import HaskellTransform as Ht
+import           Config
+import           File
+import           HaskellTransform as Ht
+import           Nemo
 
 -- TODO: multiplexes the updates for different languages
 update :: Nemo FilePath File -> Nemo FilePath File

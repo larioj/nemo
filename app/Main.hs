@@ -1,27 +1,27 @@
 module Main where
 
-import System.Directory
-import System.Environment (getArgs)
-import Directory
-import File
-import Util
-import Read
-import Nemo
-import NemoGraph
-import Config
-import Update
-import qualified Data.Map as Map
-import qualified Data.List as List
-import Data.Maybe (catMaybes)
+import           Config
+import qualified Data.List          as List
+import qualified Data.Map           as Map
+import           Data.Maybe         (catMaybes)
+import           Directory
+import           File
+import           Nemo
+import           NemoGraph
+import           Read
+import           System.Directory
+import           System.Environment (getArgs)
+import           Update
+import           Util
 
 main :: IO ()
 main = getArgs >>= nemo
 
 nemo :: [String] -> IO ()
 nemo ("synch" : []) = withPreconditions synch
-nemo ("init" : []) = Main.init
+nemo ("init" : [])  = Main.init
 nemo ("status": []) = withPreconditions status
-nemo args = usage args
+nemo args           = usage args
 
 usage :: [String] -> IO ()
 usage args = putStrLn $ "unrecognized arguments: " ++ show args
@@ -54,5 +54,5 @@ withPreconditions inner =
     getCurrentDirectory >>= \cwd ->
     findParentWithMarker configDir cwd >>= \projectRoot ->
     case projectRoot of
-        Nothing -> putStrLn "fatal: Not a nemo project"
+        Nothing          -> putStrLn "fatal: Not a nemo project"
         Just projectRoot -> inner projectRoot

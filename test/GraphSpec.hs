@@ -1,9 +1,9 @@
 module GraphSpec where
 
-import Test.Hspec
-import Graph
-import Util
-import qualified Data.Set as Set
+import qualified Data.Set   as Set
+import           Graph
+import           Test.Hspec
+import           Util
 
 topoSortProperty :: Ord k => Graph k -> [k] -> Bool
 topoSortProperty g sorted =

@@ -1,8 +1,8 @@
 module HaskellReadSpec where
 
-import Test.Hspec
-import HaskellRead
-import File
+import           File
+import           HaskellRead
+import           Test.Hspec
 
 emptyFile = File "" "" "" "" "" ""
 

@@ -1,22 +1,12 @@
 module Nemo where
 
-import qualified Data.Set as Set
-import qualified Data.Map as Map
-import Data.Map
-    ( Map
-    )
-import Graph
-    ( dfv
-    )
-import Data.Maybe
-    ( catMaybes
-    )
-import NemoGraph
-    ( NemoGraph (..)
-    , dependencyGraph
-    , cloneGraph
-    , update
-    )
+import           Data.Map   (Map)
+import qualified Data.Map   as Map
+import           Data.Maybe (catMaybes)
+import qualified Data.Set   as Set
+import           Graph      (dfv)
+import           NemoGraph  (NemoGraph (..), cloneGraph, dependencyGraph,
+                             update)
 
 data Nemo k v =
     Nemo

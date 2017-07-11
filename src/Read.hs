@@ -1,5 +1,6 @@
 module Read where
 
+import           Config
 import           Control.Monad         (forM)
 import           Data.List             (isInfixOf)
 import           Data.Map              as Map
@@ -8,12 +9,11 @@ import           Directory
 import           File
 import           Graph
 import           Nemo
-import           Config
 import           NemoGraph
 import           NemoPath
+import           ReadApi
 import           System.FilePath.Posix
 import           Util
-import ReadApi
 
 getNemo :: FilePath -> IO (Nemo String File)
 getNemo projectRoot =

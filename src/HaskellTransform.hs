@@ -1,17 +1,17 @@
 module HaskellTransform where
 
-import Nemo
-import File
-import EscapeRegex
-import NemoGraph
-import Text.Regex.Posix
-import Data.Set as Set
-import Data.Map as Map
-import Hash
-import System.FilePath.Posix
-import Data.Maybe (fromMaybe)
-import Util
-import HaskellRead ( moduleToFilePath )
+import           Data.Map              as Map
+import           Data.Maybe            (fromMaybe)
+import           Data.Set              as Set
+import           EscapeRegex
+import           File
+import           Hash
+import           HaskellRead           (moduleToFilePath)
+import           Nemo
+import           NemoGraph
+import           System.FilePath.Posix
+import           Text.Regex.Posix
+import           Util
 
 makeClone :: Nemo String File -> String -> (String, File)
 makeClone nemo@(Nemo rep _) original =
@@ -61,7 +61,7 @@ replaceDependencies (Nemo _ g) file =
         replaceDependency' :: File -> (FilePath, FilePath) -> File
         replaceDependency' file (old, new) =
             replaceDependency old new file
-    
+
 replaceDependency :: FilePath -> FilePath -> File -> File
 replaceDependency old new file =
     replaceModuleImports oldMod newMod file

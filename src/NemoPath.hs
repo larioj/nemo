@@ -1,6 +1,6 @@
 module NemoPath where
 
-import System.FilePath.Posix
+import           System.FilePath.Posix
 
 data NemoPath =
     NemoPath
