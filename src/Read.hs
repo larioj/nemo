@@ -38,7 +38,9 @@ getNemo' files preds clones =
 
 getAllFiles :: FilePath -> IO [File]
 getAllFiles projectRoot =
-    getSelectedSources projectRoot >>= loadAll
+    getSelectedSources projectRoot >>=
+    loadAll >>= \files ->
+        return $ select isSupportedFile files
 
 getSelectedSources :: FilePath -> IO [NemoPath]
 getSelectedSources projectRoot =

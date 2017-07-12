@@ -8,7 +8,6 @@ import           Util
 isSupportedFilePath :: FilePath -> Bool
 isSupportedFilePath = (==) ".hs" . takeExtension
 
--- TODO: check that the file has module
 isSupportedFile :: File -> Bool
 isSupportedFile file =
     (extension file) == ".hs"
