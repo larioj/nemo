@@ -18,10 +18,10 @@ main :: IO ()
 main = getArgs >>= nemo
 
 nemo :: [String] -> IO ()
-nemo ("synch" : []) = withPreconditions synch
-nemo ("init" : [])  = Main.init
-nemo ("status": []) = withPreconditions status
-nemo args           = usage args
+nemo ("update" : []) = withPreconditions Main.update
+nemo ("init" : [])   = Main.init
+nemo ("status": [])  = withPreconditions status
+nemo args            = usage args
 
 usage :: [String] -> IO ()
 usage args = putStrLn $ "unrecognized arguments: " ++ show args
@@ -30,8 +30,8 @@ init :: IO ()
 init =
     createDirectoryIfMissing True configDir
 
-synch :: FilePath -> IO ()
-synch projectRoot = putStrLn $ "fatal: Not implemented" ++ projectRoot
+update :: FilePath -> IO ()
+update projectRoot = putStrLn $ "fatal: Not implemented" ++ projectRoot
 
 status :: FilePath -> IO ()
 status projectRoot =

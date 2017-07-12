@@ -1,6 +1,6 @@
 module HaskellUpdateSpec where
 
-import qualified Data.Map         as Map
+import qualified Data.Map      as Map
 import           File
 import           Hash
 import           HaskellUpdate

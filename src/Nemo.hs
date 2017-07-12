@@ -14,20 +14,20 @@ data Nemo k v =
         , nemoGraph         :: NemoGraph k
         } deriving (Show, Eq)
 
-sync :: Ord k => (Nemo k v -> k -> (k, v)) -> Nemo k v -> Nemo k v
-sync cloneFn init@(Nemo _ g) =
+update :: Ord k => (Nemo k v -> k -> (k, v)) -> Nemo k v -> Nemo k v
+update cloneFn init@(Nemo _ g) =
     dfv seeds seen accfn init (dependencyGraph g)
     where
         seeds = Map.keysSet (dependencyGraph g)
         seen = Set.fromList $ catMaybes $ Map.elems (cloneGraph g)
-        accfn = sync' cloneFn
+        accfn = update' cloneFn
 
-sync' :: Ord k => (Nemo k v -> k -> (k, v)) -> Nemo k v -> k -> Nemo k v
-sync' cloneFn old@(Nemo rep g) k = new
+update' :: Ord k => (Nemo k v -> k -> (k, v)) -> Nemo k v -> k -> Nemo k v
+update' cloneFn old@(Nemo rep g) k = new
     where
         (clone, cloneRep) = cloneFn old k
         newRep = Map.insert clone cloneRep rep
-        newG = update k clone g
+        newG = NemoGraph.update k clone g
         new = Nemo newRep newG
 
 empty :: Nemo k v

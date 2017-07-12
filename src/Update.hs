@@ -6,7 +6,7 @@ import           Nemo
 import           UpdateApi
 
 update :: Nemo FilePath File -> Nemo FilePath File
-update = Nemo.sync (moveToConfigDir makeClone)
+update = Nemo.update (moveToConfigDir makeClone)
 
 moveToConfigDir :: (Nemo String File -> String -> (String, File))
                  -> Nemo String File -> String -> (String, File)
