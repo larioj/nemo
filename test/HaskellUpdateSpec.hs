@@ -16,7 +16,7 @@ fileA =
         "import Foo.Bar.FileB as A\n" ++
         "import qualified NemoB as B\n\n" ++
         "fileA = undefined\n"
-{-
+
 fileA2 =
     makeFile
         pathA $
@@ -25,7 +25,6 @@ fileA2 =
         "import qualified NemoB as B\n\n" ++
         "fileA = undefined\n" ++
         "fileA2 = FileA.fileA\n"
--}
 
 pathB = makeNemoPath "/usr/someusr" "" "Foo/Bar/FileB.hs"
 fileB =
@@ -89,7 +88,6 @@ spec = do
                         $ "Spec_" ++ hash ++ ".hs") $
                     "{-# OPTIONS_GHC -F -pgmF hspec-discover #-}\n"
 
-{- TODO: This should pass
         it "should replace self references in methods" $ do
             shouldBe (replaceModuleWithHash fileA2) $
                 let hash = base16AlphaHash $ contents fileA2 in
@@ -100,7 +98,7 @@ spec = do
                     "import qualified NemoB as B\n\n" ++
                     "fileA = undefined\n" ++
                     "fileA2 = FileA_" ++ hash ++ ".fileA\n"
--}
+
     describe "The makeClone method" $ do
         it "should be able to create a correct clone" $ do
             shouldBe (snd $ makeClone nemo $ identifier fileB) $

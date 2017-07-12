@@ -33,7 +33,27 @@ replaceModuleWithHash file =
 replaceModule :: String -> File -> File
 replaceModule new file =
     replaceFilePart (moduleToFilePath new) $
+    replaceSelfModuleUses new $
     replaceModuleDeclaration new file
+
+replaceSelfModuleUses :: String -> File -> File
+replaceSelfModuleUses new file =
+    replaceModuleUses old new file
+    where
+        old = filePathToModule $ filePart file
+
+replaceModuleUses :: String -> String -> File -> File
+replaceModuleUses old new file =
+    Prelude.foldl replaceModuleUse file (zip oldUses newUses)
+    where
+        oldUses = extractModuleUses old (contents file)
+        newUses = fmap (replaceSafe old new) oldUses
+
+replaceModuleUse :: File -> (String, String) -> File
+replaceModuleUse file (old, new) =
+    replaceContents newContents file
+    where
+        newContents = replaceSafe old new (contents file)
 
 replaceModuleDeclaration :: String -> File -> File
 replaceModuleDeclaration new file =
@@ -64,6 +84,7 @@ replaceDependencies (Nemo _ g) file =
 
 replaceDependency :: FilePath -> FilePath -> File -> File
 replaceDependency old new file =
+    replaceModuleUses oldMod newMod $
     replaceModuleImports oldMod newMod file
     where
         oldMod = filePathToModule old
@@ -82,6 +103,10 @@ replaceModuleImportDeclaration file (old, new) =
     where
         newContents = replaceSafe old new (contents file)
 
+extractModuleUses :: String -> String -> [String]
+extractModuleUses mod contents =
+    getAllTextMatches $ contents =~ (moduleUseRegex mod)
+
 extractModuleImportDeclarations :: String -> String -> [String]
 extractModuleImportDeclarations mod contents =
     getAllTextMatches $ contents =~ (importRegex mod)
@@ -98,5 +123,5 @@ importRegex mod =
 moduleRegex :: String -> String
 moduleRegex mod = "module[\r\n\t\f\v ]+" ++ mod
 
-
-
+moduleUseRegex :: String -> String
+moduleUseRegex mod = "[\r\n\t\f\v ]+" ++ mod ++ "\\."
