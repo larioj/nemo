@@ -14,33 +14,35 @@ library
                     -fno-warn-name-shadowing
                     -fwarn-tabs
   build-depends:    base
+                  , MissingH
+                  , base16-bytestring
+                  , bytestring
                   , containers
-                  , transformers
+                  , cryptohash
+                  , directory
                   , filepath
                   , hspec
-                  , MissingH
-                  , cryptohash
-                  , bytestring
-                  , base16-bytestring
-                  , text
                   , regex-compat
                   , regex-posix
-                  , directory
-  exposed-modules:  File
-                  , Graph
-                  , NemoGraph
-                  , Nemo
-                  , StateCtl
-                  , Hash
-                  , Util
+                  , text
+                  , transformers
+
+  exposed-modules:  Config
+                  , Directory
                   , EscapeRegex
+                  , File
+                  , Graph
+                  , Hash
                   , HaskellRead
                   , HaskellUpdate
-                  , Directory
-                  , Read
-                  , Config
-                  , UpdateApi
+                  , Nemo
+                  , NemoGraph
                   , NemoPath
+                  , Read
+                  , StateCtl
+                  , Update
+                  , UpdateApi
+                  , Util
 
 executable Graph
   main-is:          Main.hs
@@ -51,9 +53,9 @@ executable Graph
                     -fwarn-tabs
   build-depends:    base
                   , Graph
+                  , containers
                   , directory
                   , filepath
-                  , containers
 
 test-suite GraphTest
   type:             exitcode-stdio-1.0
@@ -62,8 +64,8 @@ test-suite GraphTest
   hs-source-dirs:   test
   build-depends:    base
                   , Graph
-                  , hspec
-                  , containers
                   , MissingH
+                  , containers
+                  , hspec
                   , regex-compat
                   , regex-posix
