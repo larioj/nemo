@@ -43,6 +43,7 @@ library
                   , Update
                   , UpdateApi
                   , Util
+                  , Write
 
 executable Graph
   main-is:          Main.hs

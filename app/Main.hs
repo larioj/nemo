@@ -13,6 +13,7 @@ import           System.Directory
 import           System.Environment (getArgs)
 import           Update
 import           Util
+import           Write
 
 main :: IO ()
 main = getArgs >>= nemo
@@ -31,7 +32,9 @@ init =
     createDirectoryIfMissing True configDir
 
 update :: FilePath -> IO ()
-update projectRoot = putStrLn $ "fatal: Not implemented" ++ projectRoot
+update projectRoot =
+    Read.getNemo projectRoot >>= \old ->
+    Write.writeNemo projectRoot $ Update.update old
 
 status :: FilePath -> IO ()
 status projectRoot =

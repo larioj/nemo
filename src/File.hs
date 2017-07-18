@@ -1,7 +1,9 @@
 module File where
 
 import           NemoPath
+import           System.Directory
 import           System.FilePath.Posix
+import           Util
 
 data File =
     File
@@ -21,7 +23,16 @@ loadAll paths =
     sequence $ fmap load paths
 
 dump :: File -> IO ()
-dump file = writeFile (toFilePath $ path file) (contents file)
+dump file =
+    ifM (doesFileExist filePath)
+        (return ()) $
+        writeFile filePath (contents file)
+    where
+        filePath = toFilePath $ path file
+
+dumpAll :: [File] -> IO ()
+dumpAll files =
+    mapM_ dump files
 
 identifier :: File -> String
 identifier file = filePart file

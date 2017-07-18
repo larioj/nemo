@@ -43,3 +43,15 @@ getMap projectRoot path =
 readListFile :: Read a => FilePath -> FilePath -> IO [a]
 readListFile projectRoot path =
     readFileWithDefault "[]" (projectRoot </> path) >>= return . read
+
+writeCloneGraph :: FilePath -> Map FilePath (Maybe FilePath) -> IO ()
+writeCloneGraph project m =
+    writeMap project cloneFile m
+
+writePredecessorGraph :: FilePath -> Map FilePath (Maybe FilePath) -> IO ()
+writePredecessorGraph project m =
+    writeMap project predecessorFile m
+
+writeMap :: (Show k, Show v) => FilePath -> FilePath -> Map k v -> IO ()
+writeMap project path m =
+    writeFile (project </> path) $ show $ Map.toList m

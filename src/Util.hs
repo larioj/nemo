@@ -2,6 +2,9 @@ module Util where
 
 import           Data.List        (intercalate)
 import           Data.List.Utils  (replace)
+import           Data.Map         (Map)
+import qualified Data.Map         as Map
+import qualified Data.Maybe       as Maybe
 import           System.Directory (doesPathExist)
 
 choose :: a -> a -> Bool -> a
@@ -41,3 +44,8 @@ readFileWithDefault defCont path =
     ifM (doesPathExist path)
         (readFile path)
         (return defCont)
+
+flattenMap :: Map k (Maybe v) -> Map k v
+flattenMap m =
+    Map.map Maybe.fromJust $
+    Map.filter Maybe.isJust m
