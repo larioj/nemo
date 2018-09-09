@@ -13,7 +13,7 @@ Useful Commands
   $ stack test
   $ stack exec nemo-exe
   $ git add .
-  $ git commit -m 'Add cat'
+  $ git commit
   $ git status | grep ':'
   $ git diff
   $ git stash
