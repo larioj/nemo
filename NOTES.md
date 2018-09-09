@@ -14,7 +14,7 @@ Useful Commands
   $ stack exec nemo-exe
   $ git add .
   $ git commit -m 'Add cat'
-  $ git status
+  $ git status | grep ':'
   $ git diff
   $ git stash
   $ git stash show -p
