@@ -27,6 +27,7 @@ dependencies:
 - cryptohash >= 0.11 && < 1
 - bytestring >= 0.10 && < 1
 - base64-bytestring >= 1 && < 2
+- hashtables >= 1.2 && < 2
 
 library:
   source-dirs: src
