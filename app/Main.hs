@@ -21,7 +21,11 @@ getNemoPath :: IO (Maybe FilePath)
 getNemoPath = getMarkerPath nemoDir
 
 fromMaybeOrDie :: IO (Maybe a) -> IO a
-fromMaybeOrDie m = fromMaybe <$> exitFailure <*> m
+fromMaybeOrDie iom = do
+  m <- iom
+  case m of
+    Nothing -> exitFailure
+    Just a -> return a
 
 getNemoPathOrDie :: IO FilePath
 getNemoPathOrDie = fromMaybeOrDie getNemoPath
