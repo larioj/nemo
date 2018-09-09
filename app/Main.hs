@@ -15,7 +15,7 @@ import           System.FilePath
 import           Text.Printf         (printf)
 
 nemoDir :: FilePath
-nemoDir = "nemo"
+nemoDir = "nemolib"
 
 getNemoPath :: IO (Maybe FilePath)
 getNemoPath = getMarkerPath nemoDir
@@ -55,11 +55,12 @@ init = do
 
 checkin :: FilePath -> IO ()
 checkin source = do
-  nemoPath <- getNemoPathOrDie
+  srcPath <- getSrcPathOrDie
   hash <- fmap alphaHash (readFile source)
   let name = printf "%s_%s" (takeBaseName source) hash
-  let dest = joinPath [nemoPath, srcDir, name]
-  renameFile source dest
+  let dest = joinPath [srcPath, name]
+  -- TODO(larioj): think about renameFile
+  copyFile source dest
   -- TODO(larioj): make file ro
   putStrLn name
 

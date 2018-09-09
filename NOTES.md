@@ -21,6 +21,19 @@ Useful Commands
   $ stack install hfmt
   $ stack exec hfmt -- -w
 
+  $ cd examples/list
+    stack build
+    alias nemo='stack exec nemo-exe --'
+    tree .
+    nemo init
+    tree .
+    nemo checkin List.c
+    nemo checkin append.c
+    nemo checkin size.c
+    tree .
+    nemo cat main.c
+    rm -rf nemolib
+
 Common Files
 ------------
 - $HOME/Nemo3/nemo-cat.hs
@@ -30,6 +43,13 @@ Common Files
 - src/Lib.hs
 - app/Main.hs
 - test/Spec.hs
+
+Example Project
+---------------
+- examples/list/List.c
+- examples/list/append.c
+- examples/list/main.c
+- examples/list/size.c
 
 Scratch
 -------
