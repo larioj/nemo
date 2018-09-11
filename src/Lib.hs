@@ -1,5 +1,6 @@
 module Lib where
 
+import           Control.Applicative
 import           Control.Monad
 import           Crypto.Hash.SHA256     (hash)
 import           Data.ByteString.Base64 (encode)
@@ -15,12 +16,11 @@ import           System.Environment
 import           System.Exit
 import           System.FilePath
 
-data Nrl
-  = FsPath FilePath
-  | NemoId String
+data Checkin =
+  Checkin FilePath
 
 data Directive
-  = Include String
+  = Include (Either String Checkin)
             String
   | Export String
   | Content [String]
@@ -50,15 +50,31 @@ getSrcPath = getMarkerPath srcDir
 getSrcPathOrDie :: IO FilePath
 getSrcPathOrDie = fromMaybeOrDie getSrcPath
 
-parseDirective :: String -> Directive
-parseDirective raw
-  | "#nemo include " `isPrefixOf` raw =
-    let [_, _, name, alias] = words raw
-     in Include name alias
-  | "#nemo export " `isPrefixOf` raw =
-    let [_, _, alias] = words raw
-     in Export alias
-  | otherwise = Content (tokenize raw)
+parseDirective :: String -> Maybe Directive
+parseDirective raw =
+  let ws = words =<< splitOneOf "()" raw
+   in case stripPrefix ["#nemo"] ws <|> stripPrefix ["#", "nemo"] ws of
+        Just ["include", "checkin", path, alias] ->
+          Just $ Include (Right (Checkin path)) alias
+        Just ["include", name, alias] -> Just $ Include (Left name) alias
+        Just ["export", alias] -> Just $ Export alias
+        Just other -> Nothing
+        Nothing -> Just $ Content (tokenize raw)
+
+parseDirectiveOrDie :: String -> IO Directive
+parseDirectiveOrDie raw =
+  case parseDirective raw of
+    Just d  -> return d
+    Nothing -> die $ unwords ["unable to parse:", raw]
+
+showDirective :: Directive -> String
+showDirective d =
+  case d of
+    Include (Left name) alias -> unwords ["#nemo include", name, alias]
+    Include (Right (Checkin path)) alias ->
+      concat ["#nemo include (checkin ", path, ") ", alias]
+    Export alias -> unwords ["#nemo export", alias]
+    Content tokens -> concat tokens
 
 paths :: FilePath -> [FilePath]
 paths = reverse . tail . map concat . inits . splitPath

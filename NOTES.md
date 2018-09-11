@@ -22,6 +22,8 @@ Useful Commands
   $ stack install hfmt
   $ stack exec hfmt -- -w
 
+Manual Testing
+--------------
   $ cd examples/list
     stack build
     alias nemo='stack exec nemo-exe --'

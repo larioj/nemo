@@ -13,6 +13,7 @@ import           System.Directory
 import           System.Environment
 import           System.Exit
 import           System.FilePath
+import           System.IO
 import           Text.Printf         (printf)
 
 main :: IO ()
@@ -20,7 +21,7 @@ main = do
   args <- getArgs
   case args of
     ["init"]          -> init
-    ["checkin", path] -> checkin path
+    ["checkin", path] -> putStrLn =<< checkin Nothing path
     ["cat", path]     -> cat path
     other             -> exitFailure
 
@@ -29,15 +30,35 @@ init = do
   touchDirectory nemoDir
   touchDirectory srcDir
 
-checkin :: FilePath -> IO ()
-checkin source = do
+checkin :: Maybe (H.BasicHashTable String String) -> FilePath -> IO String
+checkin maybeDone source = do
+  done <-
+    case maybeDone of
+      Just d  -> return d
+      Nothing -> H.new
   srcPath <- getSrcPathOrDie
-  hash <- fmap alphaHash (readFile source)
-  let name = printf "%s_%s" (takeBaseName source) hash
-  let dest = joinPath [srcPath, name]
-  renameFile source dest
+  (tmpPath, h) <- openTempFile "/tmp" "nemo"
+  content <- readFile source
+  for_ (lines content) $ \line -> do
+    oldDirective <- parseDirectiveOrDie line
+    directive <-
+      case oldDirective of
+        Include (Right (Checkin path)) alias -> do
+          maybeName <- H.lookup done path
+          name <-
+            case maybeName of
+              Just n  -> return n
+              Nothing -> checkin (Just done) path
+          return $ Include (Left name) alias
+        other -> return other
+    hPutStrLn h (showDirective directive)
+  hClose h
+  hash <- fmap alphaHash (readFile tmpPath)
+  let name = concat [takeBaseName source, "_", hash]
+  renameFile tmpPath $ joinPath [srcPath, name]
   -- TODO(larioj): make file ro
-  putStrLn name
+  H.insert done source name
+  return name
 
 type MutableMap = H.BasicHashTable String String
 
@@ -54,13 +75,18 @@ append seen source = do
   srcsDir <- getSrcPathOrDie
   translations <- H.new :: IO MutableMap
   content <- readFile source
-  for_ (lines content) $ \line ->
-    case parseDirective line of
+  for_ (lines content) $ \line -> do
+    directive <- parseDirectiveOrDie line
+    case directive of
       Export alias ->
         let hash = getHash source
             name = alias ++ "_" ++ hash
          in unless (null hash) $ H.insert translations alias name
-      Include name alias -> do
+      Include e alias -> do
+        name <-
+          case e of
+            Left n               -> return n
+            Right (Checkin path) -> checkin Nothing path
         H.insert translations alias name
         let newSource = srcDir </> name
         alreadyAppended <- H.lookup seen newSource
