@@ -12,6 +12,7 @@ import           Data.Maybe
 import           Data.Traversable
 import           System.Directory
 import           System.Environment
+import           System.Exit
 import           System.FilePath
 
 data Nrl
@@ -23,6 +24,31 @@ data Directive
             String
   | Export String
   | Content [String]
+
+nemoDir :: FilePath
+nemoDir = "nemolib"
+
+getNemoPath :: IO (Maybe FilePath)
+getNemoPath = getMarkerPath nemoDir
+
+fromMaybeOrDie :: IO (Maybe a) -> IO a
+fromMaybeOrDie iom = do
+  m <- iom
+  case m of
+    Nothing -> exitFailure
+    Just a  -> return a
+
+getNemoPathOrDie :: IO FilePath
+getNemoPathOrDie = fromMaybeOrDie getNemoPath
+
+srcDir :: FilePath
+srcDir = joinPath [nemoDir, "src"]
+
+getSrcPath :: IO (Maybe FilePath)
+getSrcPath = getMarkerPath srcDir
+
+getSrcPathOrDie :: IO FilePath
+getSrcPathOrDie = fromMaybeOrDie getSrcPath
 
 parseDirective :: String -> Directive
 parseDirective raw

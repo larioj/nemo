@@ -15,31 +15,6 @@ import           System.Exit
 import           System.FilePath
 import           Text.Printf         (printf)
 
-nemoDir :: FilePath
-nemoDir = "nemolib"
-
-getNemoPath :: IO (Maybe FilePath)
-getNemoPath = getMarkerPath nemoDir
-
-fromMaybeOrDie :: IO (Maybe a) -> IO a
-fromMaybeOrDie iom = do
-  m <- iom
-  case m of
-    Nothing -> exitFailure
-    Just a  -> return a
-
-getNemoPathOrDie :: IO FilePath
-getNemoPathOrDie = fromMaybeOrDie getNemoPath
-
-srcDir :: FilePath
-srcDir = joinPath [nemoDir, "src"]
-
-getSrcPath :: IO (Maybe FilePath)
-getSrcPath = getMarkerPath srcDir
-
-getSrcPathOrDie :: IO FilePath
-getSrcPathOrDie = fromMaybeOrDie getSrcPath
-
 main :: IO ()
 main = do
   args <- getArgs

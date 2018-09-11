@@ -14,7 +14,7 @@ Useful Commands
   $ stack test
   $ stack exec nemo-exe
   $ git add .
-  $ git commit
+  $ git commit -q
   $ git status | grep ':'
   $ git diff
   $ git stash
