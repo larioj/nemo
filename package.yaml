@@ -33,7 +33,7 @@ library:
   source-dirs: src
 
 executables:
-  nemo-exe:
+  nemo:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

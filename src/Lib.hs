@@ -1,10 +1,10 @@
 module Lib where
 
+import           Control.Monad
 import           Crypto.Hash.SHA256     (hash)
 import           Data.ByteString.Base64 (encode)
 import           Data.ByteString.Char8  (pack, unpack)
 import           Data.Char
-import           Data.Char              (Char, chr, ord)
 import           Data.Foldable
 import           Data.List
 import           Data.List.Split
@@ -13,6 +13,10 @@ import           Data.Traversable
 import           System.Directory
 import           System.Environment
 import           System.FilePath
+
+data Nrl
+  = FsPath FilePath
+  | NemoId String
 
 data Directive
   = Include String
@@ -51,9 +55,7 @@ getMarkerPath marker = do
 touchDirectory :: FilePath -> IO ()
 touchDirectory path = do
   exists <- doesDirectoryExist path
-  if exists
-    then return ()
-    else createDirectory path
+  unless exists $ createDirectory path
 
 at :: [a] -> Int -> Maybe a
 at list idx =
@@ -62,7 +64,7 @@ at list idx =
     else Just $ list !! idx
 
 tokenize :: String -> [String]
-tokenize raw = groupBy sameTokenClass raw
+tokenize = groupBy sameTokenClass
 
 sameTokenClass :: Char -> Char -> Bool
 sameTokenClass a b =
@@ -91,4 +93,4 @@ base64ToAlpha c =
     c   -> c
 
 alphaHash :: String -> String
-alphaHash = (map base64ToAlpha) . unpack . encode . hash . pack
+alphaHash = map base64ToAlpha . unpack . encode . hash . pack

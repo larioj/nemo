@@ -1,6 +1,7 @@
 module Main where
 
 import           Control.Applicative
+import           Control.Monad
 import           Data.Foldable
 import qualified Data.HashTable.IO   as H
 import           Data.List.Split
@@ -25,7 +26,7 @@ fromMaybeOrDie iom = do
   m <- iom
   case m of
     Nothing -> exitFailure
-    Just a -> return a
+    Just a  -> return a
 
 getNemoPathOrDie :: IO FilePath
 getNemoPathOrDie = fromMaybeOrDie getNemoPath
@@ -59,8 +60,7 @@ checkin source = do
   hash <- fmap alphaHash (readFile source)
   let name = printf "%s_%s" (takeBaseName source) hash
   let dest = joinPath [srcPath, name]
-  -- TODO(larioj): think about renameFile
-  copyFile source dest
+  renameFile source dest
   -- TODO(larioj): make file ro
   putStrLn name
 
@@ -84,16 +84,12 @@ append seen source = do
       Export alias ->
         let hash = getHash source
             name = alias ++ "_" ++ hash
-         in if null hash
-              then return ()
-              else H.insert translations alias name
+         in unless (null hash) $ H.insert translations alias name
       Include name alias -> do
         H.insert translations alias name
-        newSource <- return $ srcDir </> name
+        let newSource = srcDir </> name
         alreadyAppended <- H.lookup seen newSource
-        if fromMaybe False alreadyAppended
-          then return ()
-          else append seen newSource
+        unless (fromMaybe False alreadyAppended) $ append seen newSource
       Content tokens -> do
         translated <- translate translations tokens
         putStrLn $ concat translated

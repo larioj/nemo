@@ -3,6 +3,7 @@ Development Notes
 
 Vim Commands
 ------------
+  : vsplit
   : lcd $HOME/Projects/nemo
 
 Useful Commands
@@ -36,8 +37,6 @@ Useful Commands
 
 Common Files
 ------------
-- $HOME/Nemo3/nemo-cat.hs
-- $HOME/Nemo3/nemo-checkin.hs
 - package.yaml
 - stack.yaml
 - src/Lib.hs
