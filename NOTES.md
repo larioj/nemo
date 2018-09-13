@@ -6,6 +6,14 @@ Vim Commands
   : vsplit
   : lcd $HOME/Projects/nemo
 
+Common Files
+------------
+- package.yaml
+- stack.yaml
+- src/Lib.hs
+- app/Main.hs
+- test/Spec.hs
+
 Useful Commands
 ---------------
   $ stack ghci
@@ -36,14 +44,6 @@ Manual Testing
     tree .
     nemo cat main.c
     rm -rf nemolib
-
-Common Files
-------------
-- package.yaml
-- stack.yaml
-- src/Lib.hs
-- app/Main.hs
-- test/Spec.hs
 
 Example Project
 ---------------

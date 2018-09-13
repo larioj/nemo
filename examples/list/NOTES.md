@@ -31,3 +31,4 @@ Commands
     rm a.out
     rm -rf nemolib
 
+  nemolib/src

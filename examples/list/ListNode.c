@@ -1,4 +1,4 @@
-#nemo export ListNode
+#nemo export ListNode ListNode
 
 struct ListNode {
   void *value;

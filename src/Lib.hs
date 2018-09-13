@@ -23,6 +23,7 @@ data Directive
   = Include (Either String Checkin)
             String
   | Export String
+           String
   | Content [String]
 
 nemoDir :: FilePath
@@ -57,7 +58,7 @@ parseDirective raw =
         Just ["include", "checkin", path, alias] ->
           Just $ Include (Right (Checkin path)) alias
         Just ["include", name, alias] -> Just $ Include (Left name) alias
-        Just ["export", alias] -> Just $ Export alias
+        Just ["export", alias, namePrefix] -> Just $ Export alias namePrefix
         Just other -> Nothing
         Nothing -> Just $ Content (tokenize raw)
 
@@ -73,7 +74,7 @@ showDirective d =
     Include (Left name) alias -> unwords ["#nemo include", name, alias]
     Include (Right (Checkin path)) alias ->
       concat ["#nemo include (checkin ", path, ") ", alias]
-    Export alias -> unwords ["#nemo export", alias]
+    Export alias namePrefix -> unwords ["#nemo export", alias, namePrefix]
     Content tokens -> concat tokens
 
 paths :: FilePath -> [FilePath]

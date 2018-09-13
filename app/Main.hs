@@ -52,9 +52,9 @@ checkin maybeDone source = do
               Just n  -> return n
               Nothing -> checkin (Just done) path
           return $ Include (Left name) alias
-        Export namePrefix -> do
+        Export alias namePrefix -> do
           writeIORef namePrefixRef namePrefix
-          return $ Export namePrefix
+          return $ Export alias namePrefix
         other -> return other
     hPutStrLn h (showDirective directive)
   hClose h
@@ -84,9 +84,9 @@ append seen source = do
   for_ (lines content) $ \line -> do
     directive <- parseDirectiveOrDie line
     case directive of
-      Export alias ->
+      Export alias namePrefix ->
         let hash = getHash source
-            name = alias ++ "_" ++ hash
+            name = namePrefix ++ "_" ++ hash
          in unless (null hash) $ H.insert translations alias name
       Include e alias -> do
         name <-

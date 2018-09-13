@@ -1,4 +1,4 @@
-#nemo export List
+#nemo export List List
 #nemo include (checkin ListNode.c) ListNode
 
 struct List {
