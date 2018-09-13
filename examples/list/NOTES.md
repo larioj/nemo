@@ -22,7 +22,12 @@ Commands
   $ nemo checkin List.c
   $ git grep 'checkin size.c'
 
-  $ alias nemo='stack exec nemo --'
+  $ stack build
+    alias nemo='stack exec nemo --'
+    nemo init
     nemo cat main.c > /tmp/foo.c
     gcc /tmp/foo.c
+    ./a.out
+    rm a.out
+    rm -rf nemolib
 

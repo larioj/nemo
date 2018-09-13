@@ -4,6 +4,7 @@ import           Control.Applicative
 import           Control.Monad
 import           Data.Foldable
 import qualified Data.HashTable.IO   as H
+import           Data.IORef
 import           Data.List.Split
 import           Data.Maybe
 import           Data.Traversable
@@ -36,6 +37,7 @@ checkin maybeDone source = do
     case maybeDone of
       Just d  -> return d
       Nothing -> H.new
+  namePrefixRef <- newIORef $ takeBaseName source
   srcPath <- getSrcPathOrDie
   (tmpPath, h) <- openTempFile "/tmp" "nemo"
   content <- readFile source
@@ -50,11 +52,15 @@ checkin maybeDone source = do
               Just n  -> return n
               Nothing -> checkin (Just done) path
           return $ Include (Left name) alias
+        Export namePrefix -> do
+          writeIORef namePrefixRef namePrefix
+          return $ Export namePrefix
         other -> return other
     hPutStrLn h (showDirective directive)
   hClose h
   hash <- fmap alphaHash (readFile tmpPath)
-  let name = concat [takeBaseName source, "_", hash]
+  namePrefix <- readIORef namePrefixRef
+  let name = concat [namePrefix, "_", hash]
   renameFile tmpPath $ joinPath [srcPath, name]
   -- TODO(larioj): make file ro
   H.insert done source name
