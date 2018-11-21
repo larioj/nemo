@@ -54,7 +54,7 @@ getSrcPathOrDie = fromMaybeOrDie getSrcPath
 parseDirective :: String -> Maybe Directive
 parseDirective raw =
   let ws = words =<< splitOneOf "()" raw
-   in case stripPrefix ["#nemo"] ws <|> stripPrefix ["#", "nemo"] ws of
+  in case stripPrefix ["#nemo"] ws <|> stripPrefix ["#", "nemo"] ws of
         Just ["include", "checkin", path, alias] ->
           Just $ Include (Right (Checkin path)) alias
         Just ["include", name, alias] -> Just $ Include (Left name) alias
