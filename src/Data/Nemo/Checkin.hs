@@ -1,7 +1,11 @@
+{-# LANGUAGE TemplateHaskell #-}
+
 module Data.Nemo.Checkin where
 
-data Checkin
-  = Checkin
-      { path :: FilePath
-      }
-  deriving (Show, Eq, Ord)
+import           Control.Lens (makeLenses)
+
+data Checkin = Checkin
+  { _path :: FilePath
+  } deriving (Show, Eq, Ord)
+
+makeLenses ''Checkin
