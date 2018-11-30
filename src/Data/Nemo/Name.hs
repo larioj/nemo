@@ -31,15 +31,15 @@ sep :: String
 sep = "_"
 
 _Name :: Prism' String Name
-_Name = prism' string name
+_Name = prism' toString fromString
 
-name :: String -> Maybe Name
-name s = do
+fromString :: String -> Maybe Name
+fromString s = do
   (rest, hash) <- splitOn sep s ^? _Snoc
   prefix <- return $ intercalate sep rest
   if null prefix || null hash
     then Nothing
     else Just $ Name prefix hash
 
-string :: Name -> String
-string n = _prefix n <> sep <> _hash n
+toString :: Name -> String
+toString n = _prefix n <> sep <> _hash n

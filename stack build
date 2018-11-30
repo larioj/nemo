@@ -1,0 +1,289 @@
+nemo-0.1.0.0: build (lib + exe)
+Preprocessing library for nemo-0.1.0.0..
+Building library for nemo-0.1.0.0..
+[20 of 21] Compiling Nemo.CheckIn     ( src/Nemo/CheckIn.hs, .stack-work/dist/x86_64-osx/C
+abal-2.2.0.1/build/Nemo/CheckIn.o )
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:18:3: error:
+    Variable not in scope:
+      for_ :: [String] -> (t7 -> m0 b0) -> RWST Env Log State IO a0
+   |
+18 |   for_ (lines contents) $ \line -> do
+   |   ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:19:18: error:
+    • Variable not in scope: maybeDie :: Err.Error -> t7 -> t0
+    • Perhaps you meant ‘Err.maybeDie’ (imported from Data.Nemo.Error)
+   |
+19 |     directive <- maybeDie Err.BadDirective $ line ^? _Directive
+   |                  ^^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:19:51: error:
+    • Variable not in scope: (^?) :: t0 -> t1 -> m0 Directive
+    • Perhaps you meant one of these:
+        ‘^.’ (imported from Control.Lens), ‘^’ (imported from Prelude),
+        ‘^^’ (imported from Prelude)
+      Perhaps you want to add ‘^?’ to the import list in the import of
+      ‘Control.Lens’ (src/Nemo/CheckIn.hs:12:1-26).
+   |
+19 |     directive <- maybeDie Err.BadDirective $ line ^? _Directive
+   |                                                   ^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:19:54: error:
+    • Found hole: _Directive :: t1
+      Where: ‘t1’ is an ambiguous type variable
+      Or perhaps ‘_Directive’ is mis-spelled, or not in scope
+    • In the second argument of ‘(^?)’, namely ‘_Directive’
+      In a stmt of a 'do' block:
+        directive <- (^?) maybeDie Err.BadDirective $ line _Directive
+      In the expression:
+        do directive <- (^?) maybeDie Err.BadDirective $ line _Directive
+           case directive of
+             Export _ prefix -> modify $ over exports (push prefix)
+             _ -> return ()
+           modify $ over hashCtx (flip update (unpack line))
+    • Relevant bindings include
+        line :: t7 (bound at src/Nemo/CheckIn.hs:18:28)
+        contents :: String (bound at src/Nemo/CheckIn.hs:17:3)
+        path :: FilePath (bound at src/Nemo/CheckIn.hs:16:9)
+        checkIn :: FilePath -> RWST Env Log State IO NcuInfo
+          (bound at src/Nemo/CheckIn.hs:16:1)
+      Valid substitutions include
+        checkIn :: FilePath -> RWST Env Log State IO NcuInfo
+          (defined at src/Nemo/CheckIn.hs:16:1)
+        Export :: String -> String -> Directive
+          (imported from ‘Data.Nemo.Directive’ at src/Nemo/CheckIn.hs:9:29-46)
+        False :: Bool
+          (imported from ‘Prelude’ at src/Nemo/CheckIn.hs:1:8-19
+           (and originally defined in ‘ghc-prim-0.5.2.0:GHC.Types’))
+        True :: Bool
+          (imported from ‘Prelude’ at src/Nemo/CheckIn.hs:1:8-19
+           (and originally defined in ‘ghc-prim-0.5.2.0:GHC.Types’))
+        Nothing :: forall a. Maybe a
+          (imported from ‘Prelude’ at src/Nemo/CheckIn.hs:1:8-19
+           (and originally defined in ‘GHC.Base’))
+        Just :: forall a. a -> Maybe a
+          (imported from ‘Prelude’ at src/Nemo/CheckIn.hs:1:8-19
+           (and originally defined in ‘GHC.Base’))
+        (Some substitutions suppressed; use -fmax-valid-substitutions=N or -fno-max-valid-
+substitutions)
+   |
+19 |     directive <- maybeDie Err.BadDirective $ line ^? _Directive
+   |                                                      ^^^^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:21:26: error:
+    • Variable not in scope: modify :: t2 -> m0 ()
+    • Perhaps you want to add ‘modify’ to the import list
+      in the import of ‘Control.Monad.RWS.Lazy’
+      (src/Nemo/CheckIn.hs:8:1-46).
+   |
+21 |       Export _ prefix -> modify $ over exports (push prefix)
+   |                          ^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:21:35: error:
+    • Variable not in scope: over :: t3 -> t4 -> t2
+    • Perhaps you want to add ‘over’ to the import list
+      in the import of ‘Control.Lens’ (src/Nemo/CheckIn.hs:12:1-26).
+   |
+21 |       Export _ prefix -> modify $ over exports (push prefix)
+   |                                   ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:21:40: error:
+    • Variable not in scope: exports
+    • Perhaps you meant data constructor ‘Export’ (imported from Data.Nemo.Directive)
+      Perhaps you want to add ‘exports’ to the import list
+      in the import of ‘Data.Nemo.CheckIn.State’
+      (src/Nemo/CheckIn.hs:5:1-38).
+   |
+21 |       Export _ prefix -> modify $ over exports (push prefix)
+   |                                        ^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:21:49: error:
+    Variable not in scope: push :: String -> t4
+   |
+21 |       Export _ prefix -> modify $ over exports (push prefix)
+   |                                                 ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:23:5: error:
+    • Variable not in scope: modify :: t5 -> m0 b0
+    • Perhaps you want to add ‘modify’ to the import list
+      in the import of ‘Control.Monad.RWS.Lazy’
+      (src/Nemo/CheckIn.hs:8:1-46).
+   |
+23 |     modify $ over hashCtx (flip update (unpack line))
+   |     ^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:23:14: error:
+    • Variable not in scope: over :: t6 -> (a1 -> c0) -> t5
+    • Perhaps you want to add ‘over’ to the import list
+      in the import of ‘Control.Lens’ (src/Nemo/CheckIn.hs:12:1-26).
+   |
+23 |     modify $ over hashCtx (flip update (unpack line))
+   |              ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:23:19: error:
+    • Variable not in scope: hashCtx
+    • Perhaps you want to add ‘hashCtx’ to the import list
+      in the import of ‘Data.Nemo.CheckIn.State’
+      (src/Nemo/CheckIn.hs:5:1-38).
+   |
+23 |     modify $ over hashCtx (flip update (unpack line))
+   |                   ^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:23:33: error:
+    Variable not in scope: update :: a1 -> b1 -> c0
+   |
+23 |     modify $ over hashCtx (flip update (unpack line))
+   |                                 ^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:23:41: error:
+    Variable not in scope: unpack :: t7 -> b1
+   |
+23 |     modify $ over hashCtx (flip update (unpack line))
+   |                                         ^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:24:11: error:
+    • Variable not in scope:
+        gets :: (a2 -> c1) -> RWST Env Log State IO t10
+    • Perhaps you want to add ‘gets’ to the import list
+      in the import of ‘Control.Monad.RWS.Lazy’
+      (src/Nemo/CheckIn.hs:8:1-46).
+   |
+24 |   hash <- gets $ encode . finalize . view hashCtx
+   |           ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:24:18: error:
+    Variable not in scope: encode :: b2 -> c1
+   |
+24 |   hash <- gets $ encode . finalize . view hashCtx
+   |                  ^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:24:27: error:
+    Variable not in scope: finalize :: b3 -> b2
+   |
+24 |   hash <- gets $ encode . finalize . view hashCtx
+   |                           ^^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:24:38: error:
+    • Variable not in scope: view :: t8 -> a2 -> b3
+    • Perhaps you want to add ‘view’ to the import list
+      in the import of ‘Control.Lens’ (src/Nemo/CheckIn.hs:12:1-26).
+   |
+24 |   hash <- gets $ encode . finalize . view hashCtx
+   |                                      ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:24:43: error:
+    • Variable not in scope: hashCtx
+    • Perhaps you want to add ‘hashCtx’ to the import list
+      in the import of ‘Data.Nemo.CheckIn.State’
+      (src/Nemo/CheckIn.hs:5:1-38).
+   |
+24 |   hash <- gets $ encode . finalize . view hashCtx
+   |                                           ^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:25:12: error:
+    • Variable not in scope:
+        gets :: (a3 -> f0 b4) -> RWST Env Log State IO t11
+    • Perhaps you want to add ‘gets’ to the import list
+      in the import of ‘Control.Monad.RWS.Lazy’
+      (src/Nemo/CheckIn.hs:8:1-46).
+   |
+25 |   names <- gets $ fmap (flip Name hash) . view exports
+   |            ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:25:30: error:
+    Data constructor not in scope: Name :: a4 -> t10 -> b4
+   |
+25 |   names <- gets $ fmap (flip Name hash) . view exports
+   |                              ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:25:43: error:
+    • Variable not in scope: view :: t9 -> a3 -> f0 a4
+    • Perhaps you want to add ‘view’ to the import list
+      in the import of ‘Control.Lens’ (src/Nemo/CheckIn.hs:12:1-26).
+   |
+25 |   names <- gets $ fmap (flip Name hash) . view exports
+   |                                           ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:25:48: error:
+    • Variable not in scope: exports
+    • Perhaps you meant data constructor ‘Export’ (imported from Data.Nemo.Directive)
+      Perhaps you want to add ‘exports’ to the import list
+      in the import of ‘Data.Nemo.CheckIn.State’
+      (src/Nemo/CheckIn.hs:5:1-38).
+   |
+25 |   names <- gets $ fmap (flip Name hash) . view exports
+   |                                                ^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:26:16: error:
+    • Variable not in scope:
+        canonicalNcuInfo
+          :: FilePath -> t10 -> RWST Env Log State IO NcuInfo
+    • Perhaps you want to add ‘canonicalNcuInfo’ to the import list
+      in the import of ‘Data.Nemo.NcuInfo’ (src/Nemo/CheckIn.hs:10:1-63).
+   |
+26 |   canonInfo <- canonicalNcuInfo path hash
+   |                ^^^^^^^^^^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:27:12: error:
+    Variable not in scope: copyFile :: FilePath -> FilePath -> IO a5
+   |
+27 |   liftIO $ copyFile path (canonInfo ^. contentPath)
+   |            ^^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:28:3: error:
+    Variable not in scope:
+      makeReadOnly :: FilePath -> RWST Env Log State IO a6
+   |
+28 |   makeReadOnly (canonInfo ^. contentPath)
+   |   ^^^^^^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:30:3: error:
+    Variable not in scope:
+      for_
+        :: t11
+           -> (a9 -> RWST Env Log a7 IO ()) -> RWST Env Log State IO NcuInfo
+   |
+30 |   for_ names $ \curName ->
+   |   ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:31:37: error:
+    • Variable not in scope:
+        name :: Control.Lens.Getter.Getting a9 NcuInfo a9
+    • Perhaps you meant ‘names’ (line 25)
+      Perhaps you want to add ‘name’ to one of these import lists:
+        ‘Data.Nemo.Directive’ (src/Nemo/CheckIn.hs:9:1-47)
+        ‘Data.Nemo.NcuInfo’ (src/Nemo/CheckIn.hs:10:1-63)
+   |
+31 |     unless (curName == canonInfo ^. name) $ do
+   |                                     ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:32:18: error:
+    Variable not in scope: updateName :: NcuInfo -> t12 -> t
+   |
+32 |       let info = updateName canonInfo name
+   |                  ^^^^^^^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:32:39: error:
+    • Variable not in scope: name
+    • Perhaps you meant ‘names’ (line 25)
+      Perhaps you want to add ‘name’ to one of these import lists:
+        ‘Data.Nemo.Directive’ (src/Nemo/CheckIn.hs:9:1-47)
+        ‘Data.Nemo.NcuInfo’ (src/Nemo/CheckIn.hs:10:1-63)
+   |
+32 |       let info = updateName canonInfo name
+   |                                       ^^^^
+
+/Users/larioj/Projects/nemo/src/Nemo/CheckIn.hs:33:7: error:
+    Variable not in scope:
+      createSymbolicLink :: FilePath -> FilePath -> RWST Env Log a7 IO a8
+   |
+33 |       createSymbolicLink (canonInfo ^. contentPath) (info ^. contentPath)
+   |       ^^^^^^^^^^^^^^^^^^
+
+
+--  While building custom Setup.hs for package nemo-0.1.0.0 using:
+      /Users/larioj/.stack/setup-exe-cache/x86_64-osx/Cabal-simple_mPHDZzAJ_2.2.0.1_ghc-8.
+4.3 --builddir=.stack-work/dist/x86_64-osx/Cabal-2.2.0.1 build lib:nemo exe:nemo --ghc-opt
+ions " -ddump-hi -ddump-to-file -fdiagnostics-color=always"
+    Process exited with code: ExitFailure 1
