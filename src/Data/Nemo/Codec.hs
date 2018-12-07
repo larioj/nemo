@@ -1,6 +1,6 @@
 module Data.Nemo.Codec where
 
-import           Data.Aeson (defaultOptions, fieldLabelModifier)
+import           Data.Aeson (Options, defaultOptions, fieldLabelModifier)
 import           Data.List  (isPrefixOf)
 
 dropLeadingUnderscore :: String -> String
@@ -9,4 +9,5 @@ dropLeadingUnderscore s =
     then tail s
     else s
 
+customOptions :: Options
 customOptions = defaultOptions {fieldLabelModifier = dropLeadingUnderscore}

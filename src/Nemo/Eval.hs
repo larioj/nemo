@@ -1,18 +1,21 @@
 module Nemo.Eval where
 
-import           Control.Lens              (re, (^.))
-import           Control.Monad.IO.Class    (liftIO)
-import           Control.Monad.RWS.Lazy    (RWST)
-import           Data.Foldable             (for_)
-import           Data.Nemo.Directive       (_Directive)
-import           Data.Nemo.Env             (Env)
-import           Data.Nemo.Eval.Expression (Expression (Copy, Move), target)
-import qualified Data.Nemo.Eval.Expression as Exp
-import           Data.Nemo.Log             (Log)
-import           Data.Nemo.Name            (Name)
-import           Data.Nemo.NcuInfo         (name)
-import           Nemo.CheckIn              (copy, move)
-import           System.IO                 (hClose, hPutStrLn, openTempFile)
+import           Control.Lens                     (re, (^.))
+import           Control.Monad.IO.Class           (liftIO)
+import           Control.Monad.RWS.Lazy           (RWST)
+import           Data.Foldable                    (for_)
+import           Data.Nemo.Directive.Parser       (_Directive)
+import           Data.Nemo.Env                    (Env)
+import           Data.Nemo.Eval.Expression        (Expression (Copy, Move),
+                                                   target)
+import qualified Data.Nemo.Eval.Expression        as Exp
+import qualified Data.Nemo.Eval.Expression.Parser as ParseExp
+import           Data.Nemo.Log                    (Log)
+import           Data.Nemo.Name                   (Name)
+import           Data.Nemo.NcuInfo                (name)
+import           Nemo.CheckIn                     (copy, move)
+import           System.IO                        (hClose, hPutStrLn,
+                                                   openTempFile)
 
 eval :: Expression -> RWST Env Log a IO Name
 eval parent = do
@@ -20,7 +23,7 @@ eval parent = do
   (tmpPath, h) <- liftIO $ openTempFile "/tmp" "nemo"
   for_ (lines contents) $ \line -> do
     lout <-
-      case Exp.fromString line of
+      case ParseExp.fromString line of
         Just child -> do
           childName <- eval child
           return $ Exp.toDirective childName child ^. re _Directive

@@ -4,7 +4,6 @@ module Data.Nemo.Env where
 
 import           Control.Lens           (makeLenses)
 import           Control.Monad.IO.Class (MonadIO, liftIO)
-import           Data.Maybe             (fromMaybe)
 import           Data.Nemo.Error        (maybeDie)
 import qualified Data.Nemo.Error        as Err
 import           Nemo.Util              (findMarker)

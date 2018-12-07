@@ -1,8 +1,7 @@
 module Nemo.Hash where
 
-import qualified Crypto.Hash.SHA256     as SHA256
 import qualified Data.ByteString.Base64 as Base64
-import           Data.ByteString.Char8  (ByteString, pack, unpack)
+import           Data.ByteString.Char8  (ByteString, unpack)
 
 base64ToAlpha :: Char -> Char
 base64ToAlpha c =

@@ -9,7 +9,7 @@ paths :: FilePath -> [FilePath]
 paths = reverse . tail . map concat . inits . splitPath
 
 find :: (MonadPlus mp, Eq (mp b)) => (a -> mp b) -> [a] -> mp b
-find f [] = mzero
+find _ [] = mzero
 find f (a:rest) =
   let b = f a
    in if b == mzero
@@ -18,7 +18,7 @@ find f (a:rest) =
 
 findM ::
      (Monad m, MonadPlus mp, Eq (mp b)) => (a -> m (mp b)) -> [a] -> m (mp b)
-findM f [] = return mzero
+findM _ [] = return mzero
 findM f (a:rest) =
   f a >>= \b ->
     if b == mzero
@@ -39,3 +39,7 @@ findMarker marker = do
   cwd <- getCurrentDirectory
   let possibleMarkers = combine <$> paths cwd <*> pure marker
   findM (liftInner match doesPathExist) possibleMarkers
+
+silence :: Either a b -> Maybe b
+silence (Right a) = Just a
+silence (Left _)  = Nothing

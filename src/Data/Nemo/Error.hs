@@ -12,5 +12,5 @@ data Error
 instance Exception Error
 
 maybeDie :: MonadIO m => Error -> Maybe a -> m a
-maybeDie err (Just a) = return a
-maybeDie err Nothing  = liftIO $ throwIO err
+maybeDie _ (Just a)  = return a
+maybeDie err Nothing = liftIO $ throwIO err
