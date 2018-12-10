@@ -1,3 +1,0 @@
-app/Main.hs:23:        other                  -> exitFailure
-src/Lib.hs:39:    Nothing -> exitFailure
-

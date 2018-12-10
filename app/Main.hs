@@ -3,21 +3,22 @@ module Main where
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.RWS.Lazy (RWST, runRWST)
 import           Data.Nemo.Env          (Env, loadEnv)
-import qualified Data.Nemo.Env          as Env
 import           Data.Nemo.Log          (Log)
 import           Nemo.Cat               (cat)
 import qualified Nemo.CheckIn           as CheckIn
 import qualified Nemo.Eval              as Eval
+import qualified Nemo.Init              as Init
 import           System.Environment     (getArgs)
 import           System.Exit            (exitFailure)
 
 main :: IO ()
 main = do
   args <- getArgs
-  env <- loadEnv
   if args == ["init"]
-    then Env.init
-    else runRWST (runCommand args) env () >> return ()
+    then Init.init
+    else do
+      env <- loadEnv
+      runRWST (runCommand args) env () >> return ()
 
 runCommand :: [String] -> RWST Env Log () IO ()
 runCommand args =

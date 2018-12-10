@@ -1,5 +1,5 @@
 #nemo export List List
-#nemo include (checkin ListNode.c) ListNode
+#nemo include (copy ListNode.c) ListNode
 
 struct List {
  unsigned int size;
