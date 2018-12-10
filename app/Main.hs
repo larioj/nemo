@@ -1,111 +1,30 @@
 module Main where
 
-import           Control.Applicative
-import           Control.Monad
-import           Data.Foldable
-import qualified Data.HashTable.IO   as H
-import           Data.IORef
-import           Data.List.Split
-import           Data.Maybe
-import           Data.Traversable
-import           Lib
-import           Prelude             hiding (init)
-import           System.Directory
-import           System.Environment
-import           System.Exit
-import           System.FilePath
-import           System.IO
-import           Text.Printf         (printf)
+import           Control.Monad.IO.Class (liftIO)
+import           Control.Monad.RWS.Lazy (RWST, runRWST)
+import           Data.Nemo.Env          (Env, loadEnv)
+import qualified Data.Nemo.Env          as Env
+import           Data.Nemo.Log          (Log)
+import           Nemo.Cat               (cat)
+import qualified Nemo.CheckIn           as CheckIn
+import qualified Nemo.Eval              as Eval
+import           System.Environment     (getArgs)
+import           System.Exit            (exitFailure)
 
 main :: IO ()
 main = do
   args <- getArgs
+  env <- loadEnv
+  if args == ["init"]
+    then Env.init
+    else runRWST (runCommand args) env () >> return ()
+
+runCommand :: [String] -> RWST Env Log () IO ()
+runCommand args =
   case args of
-    ["init"]          -> init
-    ["checkin", path] -> putStrLn =<< checkin Nothing path
-    ["cat", path]     -> cat path
-    other             -> exitFailure
-
-init :: IO ()
-init = do
-  touchDirectory nemoDir
-  touchDirectory srcDir
-
-checkin :: Maybe (H.BasicHashTable String String) -> FilePath -> IO String
-checkin maybeDone source = do
-  done <-
-    case maybeDone of
-      Just d  -> return d
-      Nothing -> H.new
-  namePrefixRef <- newIORef $ takeBaseName source
-  srcPath <- getSrcPathOrDie
-  (tmpPath, h) <- openTempFile "/tmp" "nemo"
-  content <- readFile source
-  for_ (lines content) $ \line -> do
-    oldDirective <- parseDirectiveOrDie line
-    directive <-
-      case oldDirective of
-        Include (Right (Checkin path)) alias -> do
-          maybeName <- H.lookup done path
-          name <-
-            case maybeName of
-              Just n  -> return n
-              Nothing -> checkin (Just done) path
-          return $ Include (Left name) alias
-        Export alias namePrefix -> do
-          writeIORef namePrefixRef namePrefix
-          return $ Export alias namePrefix
-        other -> return other
-    hPutStrLn h (showDirective directive)
-  hClose h
-  hash <- fmap alphaHash (readFile tmpPath)
-  namePrefix <- readIORef namePrefixRef
-  let name = concat [namePrefix, "_", hash]
-  renameFile tmpPath $ joinPath [srcPath, name]
-  -- TODO(larioj): make file ro
-  H.insert done source name
-  return name
-
-type MutableMap = H.BasicHashTable String String
-
-type MutableSet = H.BasicHashTable String Bool
-
-cat :: FilePath -> IO ()
-cat source = do
-  seen <- H.new :: IO MutableSet
-  append seen source
-
-append :: MutableSet -> FilePath -> IO ()
-append seen source = do
-  H.insert seen source True
-  srcsDir <- getSrcPathOrDie
-  translations <- H.new :: IO MutableMap
-  content <- readFile source
-  for_ (lines content) $ \line -> do
-    directive <- parseDirectiveOrDie line
-    case directive of
-      Export alias namePrefix ->
-        let hash = getHash source
-            name = namePrefix ++ "_" ++ hash
-         in unless (null hash) $ H.insert translations alias name
-      Include e alias -> do
-        name <-
-          case e of
-            Left n               -> return n
-            Right (Checkin path) -> checkin Nothing path
-        H.insert translations alias name
-        let newSource = srcDir </> name
-        alreadyAppended <- H.lookup seen newSource
-        unless (fromMaybe False alreadyAppended) $ append seen newSource
-      Content tokens -> do
-        translated <- translate translations tokens
-        putStrLn $ concat translated
-
-translate :: MutableMap -> [String] -> IO [String]
-translate translations tokens =
-  for tokens $ \token -> do
-    name <- H.lookup translations token
-    return $ fromMaybe token name
-
-getHash :: FilePath -> String
-getHash = fromMaybe "" . (`at` 1) . splitOn "_" . takeBaseName
+    ["copy", path]         -> CheckIn.copy path >> return ()
+    ["move", path]         -> CheckIn.move path >> return ()
+    ["cat", path]          -> cat path
+    ["eval", "copy", path] -> Eval.copy path >> return ()
+    ["eval", "move", path] -> Eval.move path >> return ()
+    _                      -> liftIO $ exitFailure

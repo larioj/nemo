@@ -20,9 +20,10 @@ data Env = Env
 
 makeLenses ''Env
 
-loadEnv :: MonadIO m => String -> m Env
-loadEnv marker = do
-  fmap env . maybeDie Err.UnableToFindMarker =<< liftIO (findMarker marker)
+loadEnv :: MonadIO m => m Env
+loadEnv =
+  fmap env . maybeDie Err.UnableToFindMarker =<<
+  liftIO (findMarker Config.libName)
 
 env :: String -> Env
 env nemo =

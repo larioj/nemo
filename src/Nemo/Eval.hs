@@ -13,9 +13,16 @@ import qualified Data.Nemo.Eval.Expression.Parser as ParseExp
 import           Data.Nemo.Log                    (Log)
 import           Data.Nemo.Name                   (Name)
 import           Data.Nemo.NcuInfo                (name)
-import           Nemo.CheckIn                     (copy, move)
+import qualified Nemo.CheckIn                     as CheckIn
+import           System.FilePath.Lens             (basename)
 import           System.IO                        (hClose, hPutStrLn,
                                                    openTempFile)
+
+copy :: FilePath -> RWST Env Log a IO Name
+copy path = eval $ Copy path (path ^. basename)
+
+move :: FilePath -> RWST Env Log a IO Name
+move path = eval $ Move path (path ^. basename)
 
 eval :: Expression -> RWST Env Log a IO Name
 eval parent = do
@@ -32,6 +39,6 @@ eval parent = do
   liftIO $ hClose h
   info <-
     case parent of
-      Copy _ _ -> copy tmpPath
-      Move _ _ -> move tmpPath
+      Copy _ _ -> CheckIn.copy tmpPath
+      Move _ _ -> CheckIn.move tmpPath
   return $ info ^. name

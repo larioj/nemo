@@ -12,7 +12,7 @@ fromString = silence . parse expression "Line"
 
 expression :: Parser Expression
 expression =
-  combine <$> spaces <*> nemo <*> many1 spaces <*> string "include" <*>
+  combine <$> spaces <*> nemo <*> many1 space <*> string "include" <*>
   many1 space <*>
   paren (copy <|> move) <*>
   many1 space <*>

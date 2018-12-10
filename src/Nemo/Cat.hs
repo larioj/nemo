@@ -21,15 +21,27 @@ import           Data.Nemo.NcuInfo          (canonicalName, contentPath, name,
                                              readNcuInfo)
 import qualified Data.Set                   as Set
 
-cat :: Name -> RWST Env Log a IO ()
-cat = runState (State [] Set.empty) . cat'
+cat :: FilePath -> RWST Env Log a IO ()
+cat path = runState (State [] Set.empty) $ inlineDirectives path Nothing
+
+catName :: Name -> RWST Env Log a IO ()
+catName = runState (State [] Set.empty) . cat'
 
 cat' :: Name -> RWST Env Log State IO ()
 cat' parent = do
   parentInfo <- readNcuInfo parent
   modify $ over names (push Map.empty)
   modify $ set (seen . at (parentInfo ^. canonicalName)) True
-  contents <- liftIO $ readFile (parentInfo ^. contentPath)
+  inlineDirectives
+    (parentInfo ^. contentPath)
+    (Just $ parentInfo ^. name . hash)
+  localNames <- gets $ view (names . peek)
+  tell $ [show localNames]
+  modify $ over names pop
+
+inlineDirectives :: String -> Maybe String -> RWST Env Log State IO ()
+inlineDirectives path contentHash = do
+  contents <- liftIO $ readFile path
   for_ (lines contents) $ \line -> do
     directive <- maybeDie Err.BadDirective $ line ^? _Directive
     case directive of
@@ -38,12 +50,11 @@ cat' parent = do
         modify $ over (names . peek) (Map.insert alias child)
         seenChild <- gets $ view (seen . at (childInfo ^. canonicalName))
         unless seenChild $ cat' child
-      Export alias prefix -> do
-        modify $ over (names . peek) $ Map.insert alias $
-          Name prefix (parentInfo ^. name . hash)
+      Export alias prefix ->
+        case contentHash of
+          Nothing -> return ()
+          Just h ->
+            modify $ over (names . peek) $ Map.insert alias $ Name prefix h
       Content tokens -> do
         ns <- gets $ Map.map (^. re _Name) . view (names . peek)
         liftIO $ putStrLn $ concat $ fmap (asFn id ns) tokens
-  localNames <- gets $ view (names . peek)
-  tell $ [show localNames]
-  modify $ over names pop

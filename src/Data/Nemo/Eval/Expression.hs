@@ -11,6 +11,7 @@ data Expression
          , _alias  :: String }
   | Move { _target :: FilePath
          , _alias  :: String }
+  deriving (Show, Eq)
 
 makeLenses ''Expression
 
