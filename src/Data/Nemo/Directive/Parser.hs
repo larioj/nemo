@@ -4,8 +4,7 @@ module Data.Nemo.Directive.Parser where
 
 import           Control.Lens          (Prism', prism', re, (^.))
 import           Data.Nemo.Directive   (Directive (Content, Export, Include))
-import           Data.Nemo.Name        (_Name)
-import           Data.Nemo.Name.Parser (name)
+import           Data.Nemo.Name.Parser (name, _Name)
 import           Nemo.Clang            (tokenize)
 import           Nemo.Parser           (identifier, nemo)
 import           Nemo.Util             (silence)

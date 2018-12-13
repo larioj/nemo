@@ -1,9 +1,9 @@
 #include "stdio.h"
 
-#nemo include (checkin List.c) List
-#nemo include (checkin append.c) append
-#nemo include (checkin empty.c) empty
-#nemo include (checkin size.c) listSize
+#nemo include (copy List.c) List
+#nemo include (copy append.c) append
+#nemo include (copy empty.c) empty
+#nemo include (copy size.c) listSize
 
 int main() {
   struct List *list = empty(sizeof(int));

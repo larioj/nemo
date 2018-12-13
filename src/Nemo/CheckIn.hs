@@ -22,15 +22,15 @@ import           Data.Nemo.NcuInfo          (NcuInfo, canonicalNcuInfo,
                                              writeNcuInfo)
 import           Nemo.Hash                  (encode)
 import           Prelude                    hiding (init)
-import           System.Directory           (copyFile, renameFile)
-import           System.Nemo                (makeReadOnly)
-import           System.Posix.Files         (createSymbolicLink)
+import           System.Nemo                (copyIfNotExists, makeReadOnly,
+                                             moveIfNotExists,
+                                             symLinkIfNotExists)
 
 move :: FilePath -> RWST Env Log a IO NcuInfo
-move = runCheckIn renameFile
+move = runCheckIn moveIfNotExists
 
 copy :: FilePath -> RWST Env Log a IO NcuInfo
-copy = runCheckIn copyFile
+copy = runCheckIn copyIfNotExists
 
 runCheckIn ::
      (FilePath -> FilePath -> IO ()) -> FilePath -> RWST Env Log a IO NcuInfo
@@ -58,6 +58,6 @@ checkIn opOnFile path = do
     unless (curName == canonInfo ^. name) $ do
       let info = updateName canonInfo curName
       liftIO $
-        createSymbolicLink (canonInfo ^. contentPath) (info ^. contentPath)
+        symLinkIfNotExists (canonInfo ^. contentPath) (info ^. contentPath)
       writeNcuInfo info
   return canonInfo

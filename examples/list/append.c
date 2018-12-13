@@ -1,7 +1,7 @@
 #nemo export append append
-#nemo include (checkin List.c) List
-#nemo include (checkin ListNode.c) ListNode
-#nemo include (checkin size.c) listSize
+#nemo include (copy List.c) List
+#nemo include (copy ListNode.c) ListNode
+#nemo include (copy size.c) listSize
 
 #include "stdlib.h"
 

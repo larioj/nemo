@@ -8,7 +8,7 @@ import           Text.Parsec.Char          (space, spaces, string)
 import           Text.Parsec.String        (Parser)
 
 fromString :: String -> Maybe Expression
-fromString = silence . parse expression "Line"
+fromString = silence . parse expression "LINE"
 
 expression :: Parser Expression
 expression =

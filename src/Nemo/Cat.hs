@@ -16,7 +16,8 @@ import           Data.Nemo.Error            (maybeDie)
 import qualified Data.Nemo.Error            as Err
 import           Data.Nemo.Extensions       (asFn, at)
 import           Data.Nemo.Log              (Log)
-import           Data.Nemo.Name             (Name (Name), hash, _Name)
+import           Data.Nemo.Name             (Name (Name), hash)
+import           Data.Nemo.Name.Parser      (_Name)
 import           Data.Nemo.NcuInfo          (canonicalName, contentPath, name,
                                              readNcuInfo)
 import qualified Data.Set                   as Set

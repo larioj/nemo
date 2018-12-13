@@ -5,6 +5,7 @@
 module Data.Nemo.NcuInfo where
 
 import           Control.Lens           (makeLenses, over, re, set, (^.))
+import           Control.Monad          (unless)
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.RWS.Lazy (RWST, ask)
 import           Data.Aeson             (FromJSON, ToJSON, decode, encode,
@@ -17,9 +18,11 @@ import           Data.Nemo.Env          (Env, metadata, sources)
 import           Data.Nemo.Error        (maybeDie)
 import qualified Data.Nemo.Error        as Err
 import           Data.Nemo.Log          (Log)
-import           Data.Nemo.Name         (Name (Name), _Name)
+import           Data.Nemo.Name         (Name (Name))
+import           Data.Nemo.Name.Parser  (_Name)
 import           GHC.Generics           (Generic)
 import           Prelude                hiding (readFile, writeFile)
+import           System.Directory       (doesPathExist)
 import           System.FilePath        (joinPath)
 import           System.FilePath        (combine)
 import qualified System.FilePath        as P
@@ -51,7 +54,14 @@ updateName info n =
   info
 
 makeAbsolute :: Env -> NcuInfo -> NcuInfo
-makeAbsolute env = over contentPath (combine (env ^. sources))
+makeAbsolute env =
+  over contentPath (combine (env ^. sources)) .
+  over metadataPath (combine (env ^. metadata))
+
+makeRelative :: Env -> NcuInfo -> NcuInfo
+makeRelative env =
+  over contentPath (P.makeRelative (env ^. sources)) .
+  over metadataPath (P.makeRelative (env ^. metadata))
 
 canonicalNcuInfo :: FilePath -> String -> RWST Env Log a IO NcuInfo
 canonicalNcuInfo path hash = do
@@ -66,15 +76,14 @@ canonicalNcuInfo path hash = do
       , _language = path ^. extension
       }
 
-makeRelative :: Env -> NcuInfo -> NcuInfo
-makeRelative env = over contentPath (P.makeRelative (env ^. sources))
-
 writeNcuInfo :: NcuInfo -> RWST Env Log a IO ()
 writeNcuInfo ncuInfo = do
   env <- ask
-  liftIO $
-    writeFile (ncuInfo ^. metadataPath) $ encode (makeRelative env ncuInfo)
-  makeReadOnly $ ncuInfo ^. metadataPath
+  ncuInfoExists <- liftIO $ doesPathExist (ncuInfo ^. metadataPath)
+  unless ncuInfoExists $ do
+    liftIO $
+      writeFile (ncuInfo ^. metadataPath) $ encode (makeRelative env ncuInfo)
+    makeReadOnly $ ncuInfo ^. metadataPath
 
 readNcuInfo :: Name -> RWST Env Log a IO NcuInfo
 readNcuInfo name = do
