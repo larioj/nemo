@@ -1,6 +1,6 @@
 module Nemo.Cat where
 
-import           Control.Lens           (over, set, view, (^.), (^?))
+import           Control.Lens           (over, set, view, (^.))
 import           Control.Monad          (unless)
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.RWS.Lazy (RWST, gets, modify, tell)
@@ -11,15 +11,13 @@ import qualified Data.Map               as Map
 import           Data.Nemo.Cat.State    (State (State), names, seen)
 import           Data.Nemo.Directive    (Directive (Content, Export, Include))
 import           Data.Nemo.Env          (Env)
-import           Data.Nemo.Error        (maybeDie)
-import qualified Data.Nemo.Error        as Err
 import           Data.Nemo.Extensions   (asFn, at)
 import           Data.Nemo.Log          (Log)
 import           Data.Nemo.Name         (Name (Name), hash)
 import           Data.Nemo.NcuInfo      (canonicalName, contentPath, name,
                                          readNcuInfo)
 import qualified Data.Set               as Set
-import           Parser.Nemo.Directive  (_Directive)
+import qualified Parser.Nemo.Directive  as Directive
 import qualified Parser.Nemo.Name       as Name
 
 cat :: FilePath -> RWST Env Log a IO ()
@@ -43,8 +41,8 @@ cat' parent = do
 inlineDirectives :: String -> Maybe String -> RWST Env Log State IO ()
 inlineDirectives path contentHash = do
   contents <- liftIO $ readFile path
-  for_ (lines contents) $ \line -> do
-    directive <- maybeDie Err.BadDirective $ line ^? _Directive
+  for_ (lines contents `zip` [0 ..]) $ \(line, lineNum) -> do
+    directive <- Directive.parseOrDie path lineNum line
     case directive of
       Include child alias -> do
         childInfo <- readNcuInfo child

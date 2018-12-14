@@ -1,6 +1,6 @@
 module Nemo.Eval where
 
-import           Control.Lens                (re, (^.))
+import           Control.Lens                ((^.))
 import           Control.Monad.IO.Class      (liftIO)
 import           Control.Monad.RWS.Lazy      (RWST)
 import           Data.Foldable               (for_)
@@ -11,7 +11,7 @@ import           Data.Nemo.Log               (Log)
 import           Data.Nemo.Name              (Name)
 import           Data.Nemo.NcuInfo           (name)
 import qualified Nemo.CheckIn                as CheckIn
-import           Parser.Nemo.Directive       (_Directive)
+import qualified Parser.Nemo.Directive       as Directive
 import qualified Parser.Nemo.Eval.Expression as ParseExp
 import           System.FilePath             (joinPath)
 import           System.FilePath.Lens        (basename, filename)
@@ -36,7 +36,7 @@ eval parent = do
       case ParseExp.fromString line of
         Just child -> do
           childName <- eval child
-          return $ Exp.toDirective childName child ^. re _Directive
+          return $ Directive.toString (Exp.toDirective childName child)
         Nothing -> return line
     liftIO $ hPutStrLn h lout
   liftIO $ hClose h

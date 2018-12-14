@@ -2,22 +2,19 @@
 
 module Parser.Nemo.Directive where
 
-import           Control.Lens        (Prism', prism')
-import           Data.Nemo.Directive (Directive (Content, Export, Include))
-import           Nemo.Clang          (tokenize)
-import           Nemo.Util           (silence)
-import           Parser.Nemo         (identifier, nemo)
-import           Parser.Nemo.Name    (name)
-import qualified Parser.Nemo.Name    as Name
-import           Text.Parsec         (ParseError, many, many1, parse, (<|>))
-import           Text.Parsec.Char    (anyChar, space, spaces, string)
-import           Text.Parsec.String  (Parser)
+import           Control.Monad.IO.Class (MonadIO)
+import           Data.Nemo.Directive    (Directive (Content, Export, Include))
+import qualified Data.Nemo.Error        as Err
+import           Nemo.Clang             (tokenize)
+import           Parser.Nemo            (identifier, nemo)
+import           Parser.Nemo.Name       (name)
+import qualified Parser.Nemo.Name       as Name
+import           Text.Parsec            (many, many1, (<|>))
+import           Text.Parsec.Char       (anyChar, space, spaces, string)
+import           Text.Parsec.String     (Parser)
 
-_Directive :: Prism' String Directive
-_Directive = prism' toString fromString
-
-fromString :: String -> Maybe Directive
-fromString = silence . parseDirective
+parseOrDie :: MonadIO m => String -> Int -> String -> m Directive
+parseOrDie file lineNum source = Err.parseOrDie directive file lineNum source
 
 toString :: Directive -> String
 toString directive =
@@ -25,9 +22,6 @@ toString directive =
     Include name alias -> unwords ["#nemo include", Name.toString name, alias]
     Export alias prefix -> unwords ["#nemo export", alias, prefix]
     Content tokens -> concat tokens
-
-parseDirective :: String -> Either ParseError Directive
-parseDirective = parse directive "LINE"
 
 directive :: Parser Directive
 directive =

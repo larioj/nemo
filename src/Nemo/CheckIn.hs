@@ -1,6 +1,6 @@
 module Nemo.CheckIn where
 
-import           Control.Lens            (over, view, (^.), (^?))
+import           Control.Lens            (over, view, (^.))
 import           Control.Monad           (unless)
 import           Control.Monad.IO.Class  (liftIO)
 import           Control.Monad.RWS.Lazy  (RWST, gets, modify)
@@ -12,15 +12,13 @@ import           Data.List.Stack         (push)
 import           Data.Nemo.CheckIn.State (State (State), exports, hashCtx)
 import           Data.Nemo.Directive     (Directive (Export))
 import           Data.Nemo.Env           (Env)
-import           Data.Nemo.Error         (maybeDie)
-import qualified Data.Nemo.Error         as Err
 import           Data.Nemo.Log           (Log)
 import           Data.Nemo.Name          (Name (Name))
 import           Data.Nemo.NcuInfo       (NcuInfo, canonicalNcuInfo,
                                           contentPath, name, updateName,
                                           writeNcuInfo)
 import           Nemo.Hash               (encode)
-import           Parser.Nemo.Directive   (_Directive)
+import qualified Parser.Nemo.Directive   as Directive
 import           Prelude                 hiding (init)
 import           System.Nemo             (copyIfNotExists, makeReadOnly,
                                           moveIfNotExists, symLinkIfNotExists)
@@ -41,8 +39,8 @@ checkIn ::
   -> RWST Env Log State IO NcuInfo
 checkIn opOnFile path = do
   contents <- liftIO $ readFile path
-  for_ (lines contents) $ \line -> do
-    directive <- maybeDie Err.BadDirective $ line ^? _Directive
+  for_ (lines contents `zip` [0 ..]) $ \(line, lineNum) -> do
+    directive <- Directive.parseOrDie path lineNum line
     case directive of
       Export _ prefix -> modify $ over exports (push prefix)
       _               -> return ()
