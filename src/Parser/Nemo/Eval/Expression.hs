@@ -1,8 +1,8 @@
-module Data.Nemo.Eval.Expression.Parser where
+module Parser.Nemo.Eval.Expression where
 
 import           Data.Nemo.Eval.Expression (Expression (Copy, Move))
-import           Nemo.Parser               (filePath, identifier, nemo)
 import           Nemo.Util                 (silence)
+import           Parser.Nemo               (filePath, identifier, nemo)
 import           Text.Parsec               (many1, parse, (<|>))
 import           Text.Parsec.Char          (space, spaces, string)
 import           Text.Parsec.String        (Parser)

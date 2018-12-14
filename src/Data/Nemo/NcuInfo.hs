@@ -19,8 +19,8 @@ import           Data.Nemo.Error        (maybeDie)
 import qualified Data.Nemo.Error        as Err
 import           Data.Nemo.Log          (Log)
 import           Data.Nemo.Name         (Name (Name))
-import qualified Data.Nemo.Name.Parser  as Name
 import           GHC.Generics           (Generic)
+import qualified Parser.Nemo.Name       as Name
 import           Prelude                hiding (readFile, writeFile)
 import           System.Directory       (doesPathExist)
 import           System.FilePath        (joinPath)

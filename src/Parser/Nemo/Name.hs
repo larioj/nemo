@@ -1,4 +1,4 @@
-module Data.Nemo.Name.Parser where
+module Parser.Nemo.Name where
 
 import           Control.Monad.IO.Class (MonadIO)
 import qualified Data.Nemo.Error        as Err

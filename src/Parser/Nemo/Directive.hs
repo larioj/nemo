@@ -1,17 +1,17 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Data.Nemo.Directive.Parser where
+module Parser.Nemo.Directive where
 
-import           Control.Lens          (Prism', prism')
-import           Data.Nemo.Directive   (Directive (Content, Export, Include))
-import           Data.Nemo.Name.Parser (name)
-import qualified Data.Nemo.Name.Parser as Name
-import           Nemo.Clang            (tokenize)
-import           Nemo.Parser           (identifier, nemo)
-import           Nemo.Util             (silence)
-import           Text.Parsec           (ParseError, many, many1, parse, (<|>))
-import           Text.Parsec.Char      (anyChar, space, spaces, string)
-import           Text.Parsec.String    (Parser)
+import           Control.Lens        (Prism', prism')
+import           Data.Nemo.Directive (Directive (Content, Export, Include))
+import           Nemo.Clang          (tokenize)
+import           Nemo.Util           (silence)
+import           Parser.Nemo         (identifier, nemo)
+import           Parser.Nemo.Name    (name)
+import qualified Parser.Nemo.Name    as Name
+import           Text.Parsec         (ParseError, many, many1, parse, (<|>))
+import           Text.Parsec.Char    (anyChar, space, spaces, string)
+import           Text.Parsec.String  (Parser)
 
 _Directive :: Prism' String Directive
 _Directive = prism' toString fromString

@@ -1,4 +1,4 @@
-module Nemo.Parser where
+module Parser.Nemo where
 
 import           Control.Applicative (liftA2)
 import           Data.Char           (isAlphaNum, isSpace)

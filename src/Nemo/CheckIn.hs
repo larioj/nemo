@@ -1,30 +1,29 @@
 module Nemo.CheckIn where
 
-import           Control.Lens               (over, view, (^.), (^?))
-import           Control.Monad              (unless)
-import           Control.Monad.IO.Class     (liftIO)
-import           Control.Monad.RWS.Lazy     (RWST, gets, modify)
-import           Control.Nemo               (runState)
-import           Crypto.Hash.SHA256         (finalize, init, update)
-import           Data.ByteString.Char8      (pack)
-import           Data.Foldable              (for_)
-import           Data.List.Stack            (push)
-import           Data.Nemo.CheckIn.State    (State (State), exports, hashCtx)
-import           Data.Nemo.Directive        (Directive (Export))
-import           Data.Nemo.Directive.Parser (_Directive)
-import           Data.Nemo.Env              (Env)
-import           Data.Nemo.Error            (maybeDie)
-import qualified Data.Nemo.Error            as Err
-import           Data.Nemo.Log              (Log)
-import           Data.Nemo.Name             (Name (Name))
-import           Data.Nemo.NcuInfo          (NcuInfo, canonicalNcuInfo,
-                                             contentPath, name, updateName,
-                                             writeNcuInfo)
-import           Nemo.Hash                  (encode)
-import           Prelude                    hiding (init)
-import           System.Nemo                (copyIfNotExists, makeReadOnly,
-                                             moveIfNotExists,
-                                             symLinkIfNotExists)
+import           Control.Lens            (over, view, (^.), (^?))
+import           Control.Monad           (unless)
+import           Control.Monad.IO.Class  (liftIO)
+import           Control.Monad.RWS.Lazy  (RWST, gets, modify)
+import           Control.Nemo            (runState)
+import           Crypto.Hash.SHA256      (finalize, init, update)
+import           Data.ByteString.Char8   (pack)
+import           Data.Foldable           (for_)
+import           Data.List.Stack         (push)
+import           Data.Nemo.CheckIn.State (State (State), exports, hashCtx)
+import           Data.Nemo.Directive     (Directive (Export))
+import           Data.Nemo.Env           (Env)
+import           Data.Nemo.Error         (maybeDie)
+import qualified Data.Nemo.Error         as Err
+import           Data.Nemo.Log           (Log)
+import           Data.Nemo.Name          (Name (Name))
+import           Data.Nemo.NcuInfo       (NcuInfo, canonicalNcuInfo,
+                                          contentPath, name, updateName,
+                                          writeNcuInfo)
+import           Nemo.Hash               (encode)
+import           Parser.Nemo.Directive   (_Directive)
+import           Prelude                 hiding (init)
+import           System.Nemo             (copyIfNotExists, makeReadOnly,
+                                          moveIfNotExists, symLinkIfNotExists)
 
 move :: FilePath -> RWST Env Log a IO NcuInfo
 move = runCheckIn moveIfNotExists

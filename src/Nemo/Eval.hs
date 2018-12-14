@@ -1,24 +1,23 @@
 module Nemo.Eval where
 
-import           Control.Lens                     (re, (^.))
-import           Control.Monad.IO.Class           (liftIO)
-import           Control.Monad.RWS.Lazy           (RWST)
-import           Data.Foldable                    (for_)
-import           Data.Nemo.Directive.Parser       (_Directive)
-import           Data.Nemo.Env                    (Env)
-import           Data.Nemo.Eval.Expression        (Expression (Copy, Move),
-                                                   target)
-import qualified Data.Nemo.Eval.Expression        as Exp
-import qualified Data.Nemo.Eval.Expression.Parser as ParseExp
-import           Data.Nemo.Log                    (Log)
-import           Data.Nemo.Name                   (Name)
-import           Data.Nemo.NcuInfo                (name)
-import qualified Nemo.CheckIn                     as CheckIn
-import           System.FilePath                  (joinPath)
-import           System.FilePath.Lens             (basename, filename)
-import           System.IO                        (IOMode (WriteMode), hClose,
-                                                   hPutStrLn, openFile)
-import           System.IO.Temp                   (createTempDirectory)
+import           Control.Lens                (re, (^.))
+import           Control.Monad.IO.Class      (liftIO)
+import           Control.Monad.RWS.Lazy      (RWST)
+import           Data.Foldable               (for_)
+import           Data.Nemo.Env               (Env)
+import           Data.Nemo.Eval.Expression   (Expression (Copy, Move), target)
+import qualified Data.Nemo.Eval.Expression   as Exp
+import           Data.Nemo.Log               (Log)
+import           Data.Nemo.Name              (Name)
+import           Data.Nemo.NcuInfo           (name)
+import qualified Nemo.CheckIn                as CheckIn
+import           Parser.Nemo.Directive       (_Directive)
+import qualified Parser.Nemo.Eval.Expression as ParseExp
+import           System.FilePath             (joinPath)
+import           System.FilePath.Lens        (basename, filename)
+import           System.IO                   (IOMode (WriteMode), hClose,
+                                              hPutStrLn, openFile)
+import           System.IO.Temp              (createTempDirectory)
 
 copy :: FilePath -> RWST Env Log a IO Name
 copy path = eval $ Copy path (path ^. basename)
