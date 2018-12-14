@@ -2,9 +2,10 @@
 
 module Data.Nemo.Directive.Parser where
 
-import           Control.Lens          (Prism', prism', re, (^.))
+import           Control.Lens          (Prism', prism')
 import           Data.Nemo.Directive   (Directive (Content, Export, Include))
-import           Data.Nemo.Name.Parser (name, _Name)
+import           Data.Nemo.Name.Parser (name)
+import qualified Data.Nemo.Name.Parser as Name
 import           Nemo.Clang            (tokenize)
 import           Nemo.Parser           (identifier, nemo)
 import           Nemo.Util             (silence)
@@ -21,9 +22,9 @@ fromString = silence . parseDirective
 toString :: Directive -> String
 toString directive =
   case directive of
-    Include name alias  -> unwords ["#nemo include", name ^. re _Name, alias]
+    Include name alias -> unwords ["#nemo include", Name.toString name, alias]
     Export alias prefix -> unwords ["#nemo export", alias, prefix]
-    Content tokens      -> concat tokens
+    Content tokens -> concat tokens
 
 parseDirective :: String -> Either ParseError Directive
 parseDirective = parse directive "LINE"

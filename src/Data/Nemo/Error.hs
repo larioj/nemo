@@ -2,10 +2,10 @@ module Data.Nemo.Error where
 
 import           Control.Exception      (Exception, throwIO)
 import           Control.Monad.IO.Class (MonadIO, liftIO)
-import Text.Parsec.String (Parser)
-import Text.Parsec (parse)
-import Text.Parsec.Error (ParseError, errorPos, setErrorPos)
-import Text.Parsec.Pos (setSourceLine)
+import           Text.Parsec            (parse)
+import           Text.Parsec.Error      (ParseError, errorPos, setErrorPos)
+import           Text.Parsec.Pos        (setSourceLine)
+import           Text.Parsec.String     (Parser)
 
 data Error
   = UnableToDecodeNcuInfo

@@ -1,6 +1,6 @@
 module Nemo.Cat where
 
-import           Control.Lens               (over, re, set, view, (^.), (^?))
+import           Control.Lens               (over, set, view, (^.), (^?))
 import           Control.Monad              (unless)
 import           Control.Monad.IO.Class     (liftIO)
 import           Control.Monad.RWS.Lazy     (RWST, gets, modify, tell)
@@ -17,7 +17,7 @@ import qualified Data.Nemo.Error            as Err
 import           Data.Nemo.Extensions       (asFn, at)
 import           Data.Nemo.Log              (Log)
 import           Data.Nemo.Name             (Name (Name), hash)
-import           Data.Nemo.Name.Parser      (_Name)
+import qualified Data.Nemo.Name.Parser      as Name
 import           Data.Nemo.NcuInfo          (canonicalName, contentPath, name,
                                              readNcuInfo)
 import qualified Data.Set                   as Set
@@ -57,5 +57,5 @@ inlineDirectives path contentHash = do
           Just h ->
             modify $ over (names . peek) $ Map.insert alias $ Name prefix h
       Content tokens -> do
-        ns <- gets $ Map.map (^. re _Name) . view (names . peek)
+        ns <- gets $ Map.map (Name.toString) . view (names . peek)
         liftIO $ putStrLn $ concat $ fmap (asFn id ns) tokens

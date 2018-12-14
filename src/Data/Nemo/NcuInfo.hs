@@ -4,7 +4,7 @@
 
 module Data.Nemo.NcuInfo where
 
-import           Control.Lens           (makeLenses, over, re, set, (^.))
+import           Control.Lens           (makeLenses, over, set, (^.))
 import           Control.Monad          (unless)
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Monad.RWS.Lazy (RWST, ask)
@@ -19,7 +19,7 @@ import           Data.Nemo.Error        (maybeDie)
 import qualified Data.Nemo.Error        as Err
 import           Data.Nemo.Log          (Log)
 import           Data.Nemo.Name         (Name (Name))
-import           Data.Nemo.Name.Parser  (_Name)
+import qualified Data.Nemo.Name.Parser  as Name
 import           GHC.Generics           (Generic)
 import           Prelude                hiding (readFile, writeFile)
 import           System.Directory       (doesPathExist)
@@ -49,8 +49,8 @@ instance FromJSON NcuInfo where
 updateName :: NcuInfo -> Name -> NcuInfo
 updateName info n =
   set name n .
-  set (contentPath . basename) (n ^. re _Name) .
-  set (metadataPath . basename) (n ^. re _Name) $
+  set (contentPath . basename) (Name.toString n) .
+  set (metadataPath . basename) (Name.toString n) $
   info
 
 makeAbsolute :: Env -> NcuInfo -> NcuInfo
@@ -71,8 +71,8 @@ canonicalNcuInfo path hash = do
     NcuInfo
       { _name = name
       , _canonicalName = name
-      , _contentPath = joinPath [env ^. sources, name ^. re _Name]
-      , _metadataPath = joinPath [env ^. metadata, name ^. re _Name]
+      , _contentPath = joinPath [env ^. sources, Name.toString name]
+      , _metadataPath = joinPath [env ^. metadata, Name.toString name]
       , _language = path ^. extension
       }
 
@@ -88,5 +88,5 @@ writeNcuInfo ncuInfo = do
 readNcuInfo :: Name -> RWST Env Log a IO NcuInfo
 readNcuInfo name = do
   env <- ask
-  encoded <- liftIO . readFile $ joinPath [env ^. metadata, name ^. re _Name]
+  encoded <- liftIO . readFile $ joinPath [env ^. metadata, Name.toString name]
   maybeDie Err.UnableToDecodeNcuInfo $ fmap (makeAbsolute env) (decode encoded)
