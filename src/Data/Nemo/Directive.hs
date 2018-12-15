@@ -5,6 +5,7 @@ module Data.Nemo.Directive where
 import           Control.Lens   (makeLenses)
 import           Data.Nemo.Name (Name)
 
+-- TODO(larioj): remove Content from Directive
 data Directive
   = Include { _name  :: Name
             , _alias :: String }

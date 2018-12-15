@@ -9,7 +9,7 @@ import           Nemo.Clang             (tokenize)
 import           Parser.Nemo            (identifier, nemo)
 import           Parser.Nemo.Name       (name)
 import qualified Parser.Nemo.Name       as Name
-import           Text.Parsec            (many, many1, (<|>))
+import           Text.Parsec            (many, many1, try, (<|>))
 import           Text.Parsec.Char       (anyChar, space, spaces, string)
 import           Text.Parsec.String     (Parser)
 
@@ -24,8 +24,11 @@ toString directive =
     Content tokens -> concat tokens
 
 directive :: Parser Directive
-directive =
-  spaces *> (nemo *> many1 space *> (include <|> export) <|> content) <* spaces
+directive = do
+  e <- try (fmap Right $ spaces *> nemo) <|> (fmap Left $ content)
+  case e of
+    Left c  -> return c
+    Right _ -> many1 space *> (include <|> export) <* spaces
 
 include :: Parser Directive
 include =
